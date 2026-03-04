@@ -58,6 +58,11 @@ for key in "${required_fields[@]}"; do
     echo "缺少或为空字段: - ${key}:" >&2
     exit 1
   fi
+  value="$(read_field "$TARGET" "$key")"
+  if is_placeholder_value "$value"; then
+    echo "字段不能为占位值: - ${key}: $value" >&2
+    exit 1
+  fi
   echo "- OK: - ${key}:"
 done
 

@@ -17,3 +17,9 @@ is_technical_task_type() {
   task_type="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
   [[ "$task_type" =~ ^(feature|bug|refactor|chore|backend|frontend|api|db|infra|test)$ ]]
 }
+
+is_placeholder_value() {
+  local v
+  v="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
+  [[ "$v" =~ ^(tbd|todo|none|n/a|na|pending|待定|暂无)$ ]]
+}

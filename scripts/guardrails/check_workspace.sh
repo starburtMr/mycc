@@ -32,6 +32,17 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
     fi
   done
 
+  route_model_val="$(read_field "$f" "route_model")"
+  route_reason_val="$(read_field "$f" "route_reason")"
+  if is_placeholder_value "$route_model_val"; then
+    echo "[route_model 为占位值] $f -> $route_model_val"
+    task_fail=1
+  fi
+  if is_placeholder_value "$route_reason_val"; then
+    echo "[route_reason 为占位值] $f -> $route_reason_val"
+    task_fail=1
+  fi
+
   # 技术执行类任务附加校验
   type_val="$(read_field "$f" "type")"
   if is_technical_task_type "$type_val"; then
@@ -47,6 +58,9 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
   project_val="$(read_field "$f" "project")"
   if [[ -z "$project_val" ]]; then
     echo "[任务缺少 project 字段] $f"
+    task_fail=1
+  elif is_placeholder_value "$project_val"; then
+    echo "[project 为占位值] $f -> $project_val"
     task_fail=1
   elif ! is_valid_project_name "$project_val"; then
     echo "[project 字段非法] $f -> $project_val"
