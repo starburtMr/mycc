@@ -20,7 +20,7 @@
 ## 3. 数据库位置
 
 - 推荐路径：`memory/memory.db`
-- 建议同时维护：`memory/backup/`
+- 备份目录：`memory/backup/`
 
 ## 4. 固定系统表（不可省略）
 
@@ -87,7 +87,7 @@
 ## 7. 并发与性能
 
 - 建议启用 WAL。
-- 高并发场景加 `busy_timeout`。
+- 高并发场景设置 `busy_timeout`。
 - 索引仅用于高频过滤/关联字段，避免过度索引。
 
 ## 8. 巡检规则（必须定期执行）
@@ -99,7 +99,7 @@
 ## 9. 备份与恢复
 
 - 每日备份 `memory.db`。
-- 设定保留周期（如 30 天）。
+- 设定保留周期（建议 30 天）。
 - 每月至少一次恢复演练。
 - 恢复后执行完整巡检。
 
@@ -112,11 +112,12 @@
 
 ## 11. 变更管理
 
-- 任何 schema 变更必须附带：
-  - 变更目的
-  - 影响范围
-  - 回滚策略
-  - 对应 `task_id`
+任何 schema 变更必须附带：
+
+- 变更目的
+- 影响范围
+- 回滚策略
+- 对应 `task_id`
 
 ## 12. 版本信息
 
@@ -138,7 +139,7 @@ bash memory/scripts/init_memory_db.sh
 bash memory/scripts/run_memory_checks.sh
 ```
 
-3. 参考示例 SQL
+3. 示例 SQL
 
 - `memory/sql/examples.sql` 提供建表示例、登记示例和查询示例。
 

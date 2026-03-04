@@ -1,5 +1,7 @@
 # 每日状态
 
-- date:
-- summary:
-- next_focus:
+> 用途：记录当日工作快照，作为跨会话续作入口。
+
+- date: YYYY-MM-DD
+- summary: 今天已完成的关键事项（2-5 条）
+- next_focus: 下一会话优先事项（可直接执行）
