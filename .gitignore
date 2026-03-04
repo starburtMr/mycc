@@ -1,0 +1,13 @@
+# Local settings
+.claude/settings.local.json
+.codex/settings.local.json
+
+# OS/Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temp
+*.tmp
+*.log
