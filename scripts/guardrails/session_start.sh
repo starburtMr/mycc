@@ -59,6 +59,11 @@ if [[ -z "$project" ]]; then
   exit 1
 fi
 
+if [[ ! "$project" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+  echo "project 字段非法，仅允许字母/数字/._-: $project" >&2
+  exit 1
+fi
+
 project_context="$ROOT_DIR/2-Projects/$project/context/PROJECT_CONTEXT.md"
 project_tooling="$ROOT_DIR/2-Projects/$project/context/TOOLING_PROFILE.md"
 if [[ ! -f "$project_context" ]]; then

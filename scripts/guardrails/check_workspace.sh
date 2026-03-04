@@ -44,7 +44,13 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
 
   # 任务绑定项目时，校验项目上下文文件
   project_val="$(sed -n 's/^- project:[[:space:]]*//p' "$f" | head -n1 | xargs)"
-  if [[ -n "$project_val" ]]; then
+  if [[ -z "$project_val" ]]; then
+    echo "[任务缺少 project 字段] $f"
+    task_fail=1
+  elif [[ ! "$project_val" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+    echo "[project 字段非法] $f -> $project_val"
+    task_fail=1
+  else
     if [[ ! -f "$ROOT_DIR/2-Projects/$project_val/context/PROJECT_CONTEXT.md" ]]; then
       echo "[缺少项目上下文] $ROOT_DIR/2-Projects/$project_val/context/PROJECT_CONTEXT.md"
       task_fail=1
