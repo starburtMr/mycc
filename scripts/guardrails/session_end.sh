@@ -21,6 +21,27 @@ if [[ ! -f "$TARGET" ]]; then
   exit 1
 fi
 
+project_val="$(sed -n 's/^- project:[[:space:]]*//p' "$TARGET" | head -n1 | xargs)"
+if [[ -z "$project_val" ]]; then
+  echo "任务缺少 project 字段，无法完成会话收尾校验: $TASK_FILE" >&2
+  exit 1
+fi
+if [[ ! "$project_val" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+  echo "project 字段非法，仅允许字母/数字/._-: $project_val" >&2
+  exit 1
+fi
+
+project_context="$ROOT_DIR/2-Projects/$project_val/context/PROJECT_CONTEXT.md"
+project_tooling="$ROOT_DIR/2-Projects/$project_val/context/TOOLING_PROFILE.md"
+if [[ ! -f "$project_context" ]]; then
+  echo "缺少项目上下文文件: $project_context" >&2
+  exit 1
+fi
+if [[ ! -f "$project_tooling" ]]; then
+  echo "缺少项目工具白名单文件: $project_tooling" >&2
+  exit 1
+fi
+
 required_fields=(
   "progress"
   "next_step"
