@@ -75,6 +75,12 @@ if is_technical_task_type "$type_val"; then
     fi
     echo "- OK: - ${tech_key}:"
   done
+
+  attempt_count_val="$(read_field "$TARGET" "attempt_count")"
+  if ! [[ "$attempt_count_val" =~ ^[0-9]+$ ]]; then
+    echo "attempt_count 必须为非负整数: $attempt_count_val" >&2
+    exit 1
+  fi
 fi
 
 if [[ ! -f "$STATUS_FILE" ]]; then

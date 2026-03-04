@@ -52,6 +52,11 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
         task_fail=1
       fi
     done
+    attempt_count_val="$(read_field "$f" "attempt_count")"
+    if ! [[ "$attempt_count_val" =~ ^[0-9]+$ ]]; then
+      echo "[attempt_count 非法] $f -> $attempt_count_val"
+      task_fail=1
+    fi
   fi
 
   # 任务绑定项目时，校验项目上下文文件
