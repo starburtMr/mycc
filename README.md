@@ -63,3 +63,6 @@
   - `bash scripts/guardrails/check_workspace.sh`
 - SQLite 巡检：
   - `bash memory/scripts/run_memory_checks.sh`
+- 一键自检：
+  - `bash scripts/guardrails/self_check.sh`
+  - 可选传任务：`bash scripts/guardrails/self_check.sh tasks/active/<task>.md`
