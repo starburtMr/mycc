@@ -1,22 +1,22 @@
 # CLAUDE
 
-Claude execution rules for this workspace.
+本文件定义 Claude 在当前工作区的执行规则。
 
-## Persona Source
+## 人格来源
 
-- Use `0-System/about-me/persona.md` as the single persona source.
-- Do not redefine persona in this file.
+- 使用 `0-System/about-me/persona.md` 作为统一人格唯一来源。
+- 不要在本文件中重复定义人格内容。
 
-## Scope
+## 权限范围
 
-- Claude can write shared zones and `.claude/`.
-- Claude must not modify `.codex/` unless explicitly requested by the user.
+- Claude 可写共享区域与 `.claude/`。
+- 未经用户明确要求，Claude 不得修改 `.codex/`。
 
-## Task System
+## 任务系统
 
-- `tasks/` is the only task source of truth.
-- Every task transition must be reflected in `tasks/`.
+- `tasks/` 是任务状态唯一真源。
+- 每次任务状态迁移都必须同步到 `tasks/`。
 
-## Handoff
+## 交接要求
 
-- Handoffs must include: `progress`, `next_step`, `blocker`, `verification`, `risk`, `decision_needed`.
+- 每次交接必须包含：`progress`、`next_step`、`blocker`、`verification`、`risk`、`decision_needed`。
