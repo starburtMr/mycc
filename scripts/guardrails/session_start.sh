@@ -11,6 +11,11 @@ if [[ -z "$TASK_FILE" ]]; then
   exit 1
 fi
 
+if [[ ! "$TASK_FILE" =~ ^tasks/active/[^/]+\.md$ ]]; then
+  echo "任务文件路径非法，仅允许 tasks/active/*.md: $TASK_FILE" >&2
+  exit 1
+fi
+
 required=(
   "$ROOT_DIR/README.md"
   "$ROOT_DIR/0-System/about-me/SOUL.md"
@@ -49,21 +54,22 @@ fi
 
 # 从任务文件读取项目名，校验项目上下文是否存在
 project="$(sed -n 's/^- project:[[:space:]]*//p' "$ROOT_DIR/$TASK_FILE" | head -n1 | xargs)"
-if [[ -n "$project" ]]; then
-  project_context="$ROOT_DIR/2-Projects/$project/context/PROJECT_CONTEXT.md"
-  project_tooling="$ROOT_DIR/2-Projects/$project/context/TOOLING_PROFILE.md"
-  if [[ ! -f "$project_context" ]]; then
-    echo "缺少项目上下文文件: $project_context" >&2
-    exit 1
-  fi
-  if [[ ! -f "$project_tooling" ]]; then
-    echo "缺少项目工具白名单文件: $project_tooling" >&2
-    exit 1
-  fi
-  echo "- OK: $project_context"
-  echo "- OK: $project_tooling"
-else
-  echo "警告: 任务未填写 project 字段，无法校验项目 context。"
+if [[ -z "$project" ]]; then
+  echo "任务缺少 project 字段，无法建立项目上下文绑定: $TASK_FILE" >&2
+  exit 1
 fi
+
+project_context="$ROOT_DIR/2-Projects/$project/context/PROJECT_CONTEXT.md"
+project_tooling="$ROOT_DIR/2-Projects/$project/context/TOOLING_PROFILE.md"
+if [[ ! -f "$project_context" ]]; then
+  echo "缺少项目上下文文件: $project_context" >&2
+  exit 1
+fi
+if [[ ! -f "$project_tooling" ]]; then
+  echo "缺少项目工具白名单文件: $project_tooling" >&2
+  exit 1
+fi
+echo "- OK: $project_context"
+echo "- OK: $project_tooling"
 
 echo "[session_start] 检查通过"

@@ -9,6 +9,8 @@
 - status: blocked
 - owner:
 - blocked_at:
+- route_model:
+- route_reason:
 
 ## 阻塞详情
 

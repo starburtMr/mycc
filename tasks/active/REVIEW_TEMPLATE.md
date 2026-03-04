@@ -9,6 +9,8 @@
 - status: review
 - owner:
 - review_started_at:
+- route_model:
+- route_reason:
 
 ## 评审范围
 

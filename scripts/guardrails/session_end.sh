@@ -10,6 +10,11 @@ if [[ -z "$TASK_FILE" ]]; then
   exit 1
 fi
 
+if [[ ! "$TASK_FILE" =~ ^tasks/active/[^/]+\.md$ ]]; then
+  echo "任务文件路径非法，仅允许 tasks/active/*.md: $TASK_FILE" >&2
+  exit 1
+fi
+
 TARGET="$ROOT_DIR/$TASK_FILE"
 if [[ ! -f "$TARGET" ]]; then
   echo "任务文件不存在: $TARGET" >&2
@@ -33,6 +38,17 @@ for key in "${required_fields[@]}"; do
   fi
   echo "- OK: - ${key}:"
 done
+
+type_val="$(sed -n 's/^- type:[[:space:]]*//p' "$TARGET" | head -n1 | xargs | tr '[:upper:]' '[:lower:]')"
+if [[ "$type_val" =~ ^(feature|bug|refactor|chore|backend|frontend|api|db|infra|test)$ ]]; then
+  for tech_key in attempt_count attempt_summary stop_reason; do
+    if ! rg -n "^- ${tech_key}:[[:space:]]*\\S+" "$TARGET" >/dev/null; then
+      echo "技术任务缺少或为空字段: - ${tech_key}:" >&2
+      exit 1
+    fi
+    echo "- OK: - ${tech_key}:"
+  done
+fi
 
 if [[ ! -f "$STATUS_FILE" ]]; then
   echo "缺少状态文件: $STATUS_FILE" >&2
