@@ -21,6 +21,7 @@ required_task_fields=(
 )
 
 task_fail=0
+declare -A seen_ids
 shopt -s nullglob
 for f in "$ROOT_DIR"/tasks/active/*.md; do
   base="$(basename "$f")"
@@ -31,6 +32,22 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
       task_fail=1
     fi
   done
+
+  id_val="$(read_field "$f" "id")"
+  if [[ -z "$id_val" ]]; then
+    echo "[id 缺失] $f"
+    task_fail=1
+  elif [[ ! "$id_val" =~ ^TASK-[0-9]{8}-[0-9A-Za-z._-]+$ ]]; then
+    echo "[id 格式非法] $f -> $id_val"
+    task_fail=1
+  else
+    if [[ -n "${seen_ids[$id_val]:-}" ]]; then
+      echo "[id 重复] $f 与 ${seen_ids[$id_val]} -> $id_val"
+      task_fail=1
+    else
+      seen_ids[$id_val]="$f"
+    fi
+  fi
 
   status_val="$(read_field "$f" "status" | tr '[:upper:]' '[:lower:]')"
   if [[ ! "$status_val" =~ ^(todo|doing|review|blocked)$ ]]; then
@@ -91,6 +108,19 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
       echo "[缺少项目工具白名单] $ROOT_DIR/2-Projects/$project_val/context/TOOLING_PROFILE.md"
       task_fail=1
     fi
+  fi
+done
+
+# 追加检查：done/archived 中不应与 active 出现重复 id
+for f in "$ROOT_DIR"/tasks/done/*.md "$ROOT_DIR"/tasks/archived/*.md; do
+  [[ -f "$f" ]] || continue
+  base="$(basename "$f")"
+  [[ "$base" == "DONE_TEMPLATE.md" || "$base" == "ARCHIVED_TEMPLATE.md" ]] && continue
+  id_val="$(read_field "$f" "id")"
+  [[ -z "$id_val" ]] && continue
+  if [[ -n "${seen_ids[$id_val]:-}" ]]; then
+    echo "[id 与 active 重复] $f 与 ${seen_ids[$id_val]} -> $id_val"
+    task_fail=1
   fi
 done
 
