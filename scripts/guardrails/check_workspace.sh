@@ -139,19 +139,23 @@ done
 
 # 3) SQLite 登记巡检
 db_fail=0
+if ! command -v sqlite3 >/dev/null 2>&1; then
+  echo "[警告] 未安装 sqlite3，无法执行 SQLite 巡检"
+  db_fail=1
+fi
 if [[ -f "$DB_PATH" ]]; then
-  if [[ -f "$CHECKS_SQL" ]]; then
+  if [[ -f "$CHECKS_SQL" && $db_fail -eq 0 ]]; then
     out="$(sqlite3 -noheader "$DB_PATH" < "$CHECKS_SQL" || true)"
     if [[ -n "$out" ]]; then
       echo "[SQLite 巡检异常]"
       echo "$out"
       db_fail=1
     fi
-  else
+  elif [[ $db_fail -eq 0 ]]; then
     echo "[警告] 缺少 checks.sql: $CHECKS_SQL"
     db_fail=1
   fi
-else
+elif [[ $db_fail -eq 0 ]]; then
   echo "[警告] 缺少数据库: $DB_PATH"
   db_fail=1
 fi
