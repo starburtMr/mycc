@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TASK_FILE="${1:-}"
+source "$ROOT_DIR/scripts/guardrails/lib.sh"
 
 echo "[session_start] 必读文件检查"
 
@@ -53,13 +54,13 @@ if [[ "$base" == "TASK_TEMPLATE.md" || "$base" == "BLOCKED_TEMPLATE.md" || "$bas
 fi
 
 # 从任务文件读取项目名，校验项目上下文是否存在
-project="$(sed -n 's/^- project:[[:space:]]*//p' "$ROOT_DIR/$TASK_FILE" | head -n1 | xargs)"
+project="$(read_field "$ROOT_DIR/$TASK_FILE" "project")"
 if [[ -z "$project" ]]; then
   echo "任务缺少 project 字段，无法建立项目上下文绑定: $TASK_FILE" >&2
   exit 1
 fi
 
-if [[ ! "$project" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+if ! is_valid_project_name "$project"; then
   echo "project 字段非法，仅允许字母/数字/._-: $project" >&2
   exit 1
 fi

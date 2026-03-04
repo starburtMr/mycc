@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DB_PATH="$ROOT_DIR/memory/memory.db"
 CHECKS_SQL="$ROOT_DIR/memory/sql/checks.sql"
+source "$ROOT_DIR/scripts/guardrails/lib.sh"
 
 echo "[guardrails] 开始巡检"
 
@@ -32,8 +33,8 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
   done
 
   # 技术执行类任务附加校验
-  type_val="$(sed -n 's/^- type:[[:space:]]*//p' "$f" | head -n1 | xargs | tr '[:upper:]' '[:lower:]')"
-  if [[ "$type_val" =~ ^(feature|bug|refactor|chore|backend|frontend|api|db|infra|test)$ ]]; then
+  type_val="$(read_field "$f" "type")"
+  if is_technical_task_type "$type_val"; then
     for tech_key in attempt_count attempt_summary stop_reason; do
       if ! rg -n "^- ${tech_key}:[[:space:]]*\\S+" "$f" >/dev/null; then
         echo "[技术任务缺失或为空字段] $f -> - ${tech_key}:"
@@ -43,11 +44,11 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
   fi
 
   # 任务绑定项目时，校验项目上下文文件
-  project_val="$(sed -n 's/^- project:[[:space:]]*//p' "$f" | head -n1 | xargs)"
+  project_val="$(read_field "$f" "project")"
   if [[ -z "$project_val" ]]; then
     echo "[任务缺少 project 字段] $f"
     task_fail=1
-  elif [[ ! "$project_val" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+  elif ! is_valid_project_name "$project_val"; then
     echo "[project 字段非法] $f -> $project_val"
     task_fail=1
   else

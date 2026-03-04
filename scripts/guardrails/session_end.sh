@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TASK_FILE="${1:-}"
 STATUS_FILE="$ROOT_DIR/0-System/status.md"
+source "$ROOT_DIR/scripts/guardrails/lib.sh"
 
 if [[ -z "$TASK_FILE" ]]; then
   echo "用法: bash scripts/guardrails/session_end.sh tasks/active/<task>.md" >&2
@@ -21,12 +22,12 @@ if [[ ! -f "$TARGET" ]]; then
   exit 1
 fi
 
-project_val="$(sed -n 's/^- project:[[:space:]]*//p' "$TARGET" | head -n1 | xargs)"
+project_val="$(read_field "$TARGET" "project")"
 if [[ -z "$project_val" ]]; then
   echo "任务缺少 project 字段，无法完成会话收尾校验: $TASK_FILE" >&2
   exit 1
 fi
-if [[ ! "$project_val" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+if ! is_valid_project_name "$project_val"; then
   echo "project 字段非法，仅允许字母/数字/._-: $project_val" >&2
   exit 1
 fi
@@ -60,8 +61,8 @@ for key in "${required_fields[@]}"; do
   echo "- OK: - ${key}:"
 done
 
-type_val="$(sed -n 's/^- type:[[:space:]]*//p' "$TARGET" | head -n1 | xargs | tr '[:upper:]' '[:lower:]')"
-if [[ "$type_val" =~ ^(feature|bug|refactor|chore|backend|frontend|api|db|infra|test)$ ]]; then
+type_val="$(read_field "$TARGET" "type")"
+if is_technical_task_type "$type_val"; then
   for tech_key in attempt_count attempt_summary stop_reason; do
     if ! rg -n "^- ${tech_key}:[[:space:]]*\\S+" "$TARGET" >/dev/null; then
       echo "技术任务缺少或为空字段: - ${tech_key}:" >&2
