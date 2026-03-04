@@ -141,3 +141,13 @@ bash memory/scripts/run_memory_checks.sh
 3. 参考示例 SQL
 
 - `memory/sql/examples.sql` 提供建表示例、登记示例和查询示例。
+
+4. 执行备份
+
+```bash
+bash memory/scripts/backup_memory_db.sh
+```
+
+- 建议通过定时任务每日执行该脚本。
+- 每周可使用 `weekly_latest.db` 作为全量快照入口。
+- 每月恢复演练建议：将备份文件复制到临时路径并运行巡检。

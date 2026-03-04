@@ -11,6 +11,13 @@
 - created_at:
 - updated_at:
 
+## 路由与上下文
+
+- route_model:
+- route_reason:
+- context_usage_pct:
+- compression_summary:
+
 ## 关联关系
 
 - project:
@@ -28,6 +35,12 @@
 - plan_step_1:
 - plan_step_2:
 - plan_step_3:
+
+## 技术任务尝试记录（技术执行类必填）
+
+- attempt_count:
+- attempt_summary:
+- stop_reason:
 
 ## 交接字段（强制）
 

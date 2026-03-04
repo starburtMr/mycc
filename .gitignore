@@ -11,3 +11,7 @@ Thumbs.db
 # Temp
 *.tmp
 *.log
+
+# SQLite runtime artifacts
+memory/backup/*.db
+memory/backup/weekly_latest.db
