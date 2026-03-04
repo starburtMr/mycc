@@ -17,21 +17,21 @@ if [[ ! -f "$TARGET" ]]; then
 fi
 
 required_fields=(
-  "- progress:"
-  "- next_step:"
-  "- blocker:"
-  "- verification:"
-  "- risk:"
-  "- decision_needed:"
+  "progress"
+  "next_step"
+  "blocker"
+  "verification"
+  "risk"
+  "decision_needed"
 )
 
 echo "[session_end] 校验交接字段"
-for p in "${required_fields[@]}"; do
-  if ! rg -n "^${p//\//\\/}" "$TARGET" >/dev/null; then
-    echo "缺少字段: ${p}" >&2
+for key in "${required_fields[@]}"; do
+  if ! rg -n "^- ${key}:[[:space:]]*\\S+" "$TARGET" >/dev/null; then
+    echo "缺少或为空字段: - ${key}:" >&2
     exit 1
   fi
-  echo "- OK: ${p}"
+  echo "- OK: - ${key}:"
 done
 
 if [[ ! -f "$STATUS_FILE" ]]; then
@@ -39,13 +39,13 @@ if [[ ! -f "$STATUS_FILE" ]]; then
   exit 1
 fi
 
-if ! rg -n "^- summary:" "$STATUS_FILE" >/dev/null; then
-  echo "0-System/status.md 缺少 '- summary:' 字段" >&2
+if ! rg -n "^- summary:[[:space:]]*\\S+" "$STATUS_FILE" >/dev/null; then
+  echo "0-System/status.md 缺少或为空 '- summary:' 字段" >&2
   exit 1
 fi
 
-if ! rg -n "^- next_focus:" "$STATUS_FILE" >/dev/null; then
-  echo "0-System/status.md 缺少 '- next_focus:' 字段" >&2
+if ! rg -n "^- next_focus:[[:space:]]*\\S+" "$STATUS_FILE" >/dev/null; then
+  echo "0-System/status.md 缺少或为空 '- next_focus:' 字段" >&2
   exit 1
 fi
 

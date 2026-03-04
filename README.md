@@ -6,7 +6,7 @@
 ## 核心规则
 
 - `tasks/` 是任务状态唯一真源。
-- 全局人格仅定义在 `0-System/about-me/persona.md`。
+- 全局人格体系定义在 `0-System/about-me/SOUL.md`、`0-System/about-me/persona.md`、`0-System/about-me/user-profile.md`。
 - `.claude/` 与 `.codex/` 为私有适配/配置区域。
 - 项目级细节放在 `2-Projects/<project-name>/`。
 - 交接记录必须写入项目 `handoff/`，不能只存在聊天里。

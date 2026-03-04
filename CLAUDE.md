@@ -4,7 +4,7 @@
 
 ## 人格来源
 
-- 使用 `0-System/about-me/persona.md` 作为统一人格唯一来源。
+- 使用 `0-System/about-me/SOUL.md`、`0-System/about-me/persona.md`、`0-System/about-me/user-profile.md` 作为统一人格体系来源。
 - 不要在本文件中重复定义人格内容。
 - 所有回复必须使用中文。
 - 沟通方式遵循人格文件：先结论后步骤，务实推进，不过度客套。

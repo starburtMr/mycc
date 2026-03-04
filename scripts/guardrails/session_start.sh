@@ -6,6 +6,11 @@ TASK_FILE="${1:-}"
 
 echo "[session_start] 必读文件检查"
 
+if [[ -z "$TASK_FILE" ]]; then
+  echo "缺少任务文件参数。用法: bash scripts/guardrails/session_start.sh tasks/active/<task>.md" >&2
+  exit 1
+fi
+
 required=(
   "$ROOT_DIR/README.md"
   "$ROOT_DIR/0-System/about-me/SOUL.md"
@@ -29,14 +34,36 @@ if [[ -f "$ROOT_DIR/CLAUDE.md" ]]; then
   echo "- OK: $ROOT_DIR/CLAUDE.md"
 fi
 
-if [[ -n "$TASK_FILE" ]]; then
-  if [[ ! -f "$ROOT_DIR/$TASK_FILE" ]]; then
-    echo "任务文件不存在: $ROOT_DIR/$TASK_FILE" >&2
+if [[ ! -f "$ROOT_DIR/$TASK_FILE" ]]; then
+  echo "任务文件不存在: $ROOT_DIR/$TASK_FILE" >&2
+  exit 1
+fi
+
+echo "- OK: $ROOT_DIR/$TASK_FILE"
+
+base="$(basename "$TASK_FILE")"
+if [[ "$base" == "TASK_TEMPLATE.md" || "$base" == "BLOCKED_TEMPLATE.md" || "$base" == "REVIEW_TEMPLATE.md" ]]; then
+  echo "任务文件不能使用模板文件: $TASK_FILE" >&2
+  exit 1
+fi
+
+# 从任务文件读取项目名，校验项目上下文是否存在
+project="$(sed -n 's/^- project:[[:space:]]*//p' "$ROOT_DIR/$TASK_FILE" | head -n1 | xargs)"
+if [[ -n "$project" ]]; then
+  project_context="$ROOT_DIR/2-Projects/$project/context/PROJECT_CONTEXT.md"
+  project_tooling="$ROOT_DIR/2-Projects/$project/context/TOOLING_PROFILE.md"
+  if [[ ! -f "$project_context" ]]; then
+    echo "缺少项目上下文文件: $project_context" >&2
     exit 1
   fi
-  echo "- OK: $ROOT_DIR/$TASK_FILE"
+  if [[ ! -f "$project_tooling" ]]; then
+    echo "缺少项目工具白名单文件: $project_tooling" >&2
+    exit 1
+  fi
+  echo "- OK: $project_context"
+  echo "- OK: $project_tooling"
 else
-  echo "提示: 未指定任务文件。建议用法: bash scripts/guardrails/session_start.sh tasks/active/<task>.md"
+  echo "警告: 任务未填写 project 字段，无法校验项目 context。"
 fi
 
 echo "[session_start] 检查通过"

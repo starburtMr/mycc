@@ -7,14 +7,16 @@ CHECKS_SQL="$ROOT_DIR/memory/sql/checks.sql"
 
 echo "[guardrails] 开始巡检"
 
-# 1) 活跃任务必填字段巡检
+# 1) 活跃任务必填字段巡检（非空）
 required_task_fields=(
-  "- progress:"
-  "- next_step:"
-  "- blocker:"
-  "- verification:"
-  "- risk:"
-  "- decision_needed:"
+  "progress"
+  "next_step"
+  "blocker"
+  "verification"
+  "risk"
+  "decision_needed"
+  "route_model"
+  "route_reason"
 )
 
 task_fail=0
@@ -22,12 +24,36 @@ shopt -s nullglob
 for f in "$ROOT_DIR"/tasks/active/*.md; do
   base="$(basename "$f")"
   [[ "$base" == "TASK_TEMPLATE.md" || "$base" == "BLOCKED_TEMPLATE.md" || "$base" == "REVIEW_TEMPLATE.md" ]] && continue
-  for p in "${required_task_fields[@]}"; do
-    if ! rg -n "^${p//\//\\/}" "$f" >/dev/null; then
-      echo "[任务缺失字段] $f -> ${p}"
+  for key in "${required_task_fields[@]}"; do
+    if ! rg -n "^- ${key}:[[:space:]]*\\S+" "$f" >/dev/null; then
+      echo "[任务缺失或为空字段] $f -> - ${key}:"
       task_fail=1
     fi
   done
+
+  # 技术执行类任务附加校验
+  type_val="$(sed -n 's/^- type:[[:space:]]*//p' "$f" | head -n1 | xargs | tr '[:upper:]' '[:lower:]')"
+  if [[ "$type_val" =~ ^(feature|bug|refactor|chore|backend|frontend|api|db|infra|test)$ ]]; then
+    for tech_key in attempt_count attempt_summary stop_reason; do
+      if ! rg -n "^- ${tech_key}:[[:space:]]*\\S+" "$f" >/dev/null; then
+        echo "[技术任务缺失或为空字段] $f -> - ${tech_key}:"
+        task_fail=1
+      fi
+    done
+  fi
+
+  # 任务绑定项目时，校验项目上下文文件
+  project_val="$(sed -n 's/^- project:[[:space:]]*//p' "$f" | head -n1 | xargs)"
+  if [[ -n "$project_val" ]]; then
+    if [[ ! -f "$ROOT_DIR/2-Projects/$project_val/context/PROJECT_CONTEXT.md" ]]; then
+      echo "[缺少项目上下文] $ROOT_DIR/2-Projects/$project_val/context/PROJECT_CONTEXT.md"
+      task_fail=1
+    fi
+    if [[ ! -f "$ROOT_DIR/2-Projects/$project_val/context/TOOLING_PROFILE.md" ]]; then
+      echo "[缺少项目工具白名单] $ROOT_DIR/2-Projects/$project_val/context/TOOLING_PROFILE.md"
+      task_fail=1
+    fi
+  fi
 done
 
 # 2) 项目 TOOLING_PROFILE 巡检
