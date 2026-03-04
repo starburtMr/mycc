@@ -8,6 +8,9 @@ echo "[session_start] 必读文件检查"
 
 required=(
   "$ROOT_DIR/README.md"
+  "$ROOT_DIR/0-System/about-me/SOUL.md"
+  "$ROOT_DIR/0-System/about-me/persona.md"
+  "$ROOT_DIR/0-System/about-me/user-profile.md"
   "$ROOT_DIR/tasks/index.md"
 )
 
@@ -33,7 +36,7 @@ if [[ -n "$TASK_FILE" ]]; then
   fi
   echo "- OK: $ROOT_DIR/$TASK_FILE"
 else
-  echo "提示: 未指定任务文件。用法: bash scripts/guardrails/session_start.sh tasks/active/<task>.md"
+  echo "提示: 未指定任务文件。建议用法: bash scripts/guardrails/session_start.sh tasks/active/<task>.md"
 fi
 
 echo "[session_start] 检查通过"

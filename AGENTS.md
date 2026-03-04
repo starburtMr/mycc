@@ -30,7 +30,7 @@
 
 - Codex 可写共享区域与 `.codex/`。
 - 未经用户明确要求，Codex 不得修改 `.claude/`。
-- 每次会话开始前，先读取：`SOUL.md`、`persona.md`、`tasks/index.md`、当前任务文件、项目 `context/`。
+- 每次会话开始前，先读取：`SOUL.md`、`persona.md`、`user-profile.md`、`tasks/index.md`、当前任务文件、项目 `context/`。
 - 不依赖“脑内记忆”，关键信息必须落盘到任务或项目文档。
 - `tasks/` 是任务状态唯一真源。
 - 每次任务状态迁移都必须同步到 `tasks/`。

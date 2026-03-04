@@ -38,7 +38,7 @@
 
 ## 会话协议
 
-- `会话开始必读`：`0-System/about-me/SOUL.md`、`0-System/about-me/persona.md`、`tasks/index.md`、当前任务文件、对应项目 `context/`。
+- `会话开始必读`：`0-System/about-me/SOUL.md`、`0-System/about-me/persona.md`、`0-System/about-me/user-profile.md`、`tasks/index.md`、当前任务文件、对应项目 `context/`。
 - `文本优先`：不要依赖“脑内记住”，重要信息必须写入文件（任务记录/状态/项目上下文）。
 - `主会话优先写回`：直接协作会话中，优先更新任务与状态文件，避免只在聊天里留痕。
 - `共享上下文降敏`：涉及对外或多人场景时，不回传无关私人上下文与敏感数据。

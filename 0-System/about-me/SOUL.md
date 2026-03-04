@@ -42,4 +42,5 @@
 
 - `SOUL.md` 负责长期原则与价值取向。
 - `persona.md` 负责可执行字段与运行约束。
-- 若两者冲突：先按 `persona.md` 执行，再同步修正 `SOUL.md`。
+- `user-profile.md` 负责用户个体偏好与协作习惯。
+- 若三者冲突：先按 `persona.md` 执行，再同步修正 `SOUL.md` 与 `user-profile.md`。
