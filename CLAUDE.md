@@ -1,4 +1,4 @@
-# CLAUDE
+# CLAUDE 执行规范
 
 本文件定义 Claude 在当前工作区的执行规则。
 
@@ -34,7 +34,7 @@
 - 每次交接必须包含：`progress`、`next_step`、`blocker`、`verification`、`risk`、`decision_needed`。
 - 技术执行类交接还必须包含：`attempt_count`、`attempt_summary`、`stop_reason`。
 
-## Skill/MCP 策略
+## 技能与 MCP 策略
 
 - 默认最小加载，只启用当前项目白名单工具。
 - 项目工具白名单见 `2-Projects/<project-name>/context/TOOLING_PROFILE.md`。

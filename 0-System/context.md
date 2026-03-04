@@ -1,4 +1,4 @@
-# Weekly Context
+# 每周上下文
 
 - week:
 - priorities:

@@ -1,9 +1,9 @@
-# .codex
+# `.codex` 目录说明
 
-Codex-specific configuration and adapter files.
+该目录用于存放 Codex 专用的配置与适配文件。
 
-## Constraints
+## 约束
 
-- Private to Codex workflows.
-- Keep platform-specific wrappers in `skills/`.
-- Shared skill content belongs in `../skills-core/`.
+- 仅用于 Codex 工作流。
+- 平台专属封装放在 `skills/`。
+- 共享技能内容统一放在 `../skills-core/`。

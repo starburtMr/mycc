@@ -1,5 +1,5 @@
-# Claude Dashboard
+# Claude 看板
 
-- Purpose: Claude private operational notes and pointers.
-- Write access: Claude only.
-- Do not store secrets in tracked files.
+- 用途：记录 Claude 私有的运行笔记与操作指引。
+- 写入权限：仅 Claude。
+- 约束：不要在被追踪文件中写入密钥等敏感信息。

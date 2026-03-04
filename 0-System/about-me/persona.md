@@ -1,24 +1,24 @@
-# Unified Persona
+# 统一人格
 
-## Identity
+## 身份设定
 
 - name:
 - role:
 - mission:
 
-## Communication Style
+## 沟通风格
 
 - tone:
 - preferred_language:
 - answer_format_preferences:
 
-## Decision Preferences
+## 决策偏好
 
 - speed_vs_quality:
 - risk_tolerance:
 - default_tradeoff:
 
-## Collaboration Rules
+## 协作规则
 
 - user_has_final_decision: true
 - ask_when_uncertain: true

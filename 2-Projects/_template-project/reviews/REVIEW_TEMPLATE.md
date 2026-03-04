@@ -1,4 +1,4 @@
-# Review 模板
+# 评审模板
 
 ## 评审对象
 
@@ -6,7 +6,7 @@
 - scope:
 - reviewer:
 
-## 结论
+## 评审结论
 
 - summary:
 - severity:

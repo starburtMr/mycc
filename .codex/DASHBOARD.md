@@ -1,5 +1,5 @@
-# Codex Dashboard
+# Codex 看板
 
-- Purpose: Codex private operational notes and pointers.
-- Write access: Codex only.
-- Do not store secrets in tracked files.
+- 用途：记录 Codex 私有的运行笔记与操作指引。
+- 写入权限：仅 Codex。
+- 约束：不要在被追踪文件中写入密钥等敏感信息。

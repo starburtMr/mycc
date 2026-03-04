@@ -1,4 +1,4 @@
-# Daily Status
+# 每日状态
 
 - date:
 - summary:
