@@ -33,3 +33,12 @@
 - `模型路由`：按任务类型选模型，并记录 `route_reason`。
 - `工具加载`：每个项目维护 `TOOLING_PROFILE.md`，未在白名单中的 Skill/MCP 默认禁用。
 - `备份策略`：`memory/memory.db` 每日备份、每周全量快照、每月恢复演练。
+
+## Guardrails 脚本
+
+- 会话开始检查：
+  - `bash scripts/guardrails/session_start.sh tasks/active/<task>.md`
+- 会话结束检查：
+  - `bash scripts/guardrails/session_end.sh tasks/active/<task>.md`
+- 工作区巡检：
+  - `bash scripts/guardrails/check_workspace.sh`
