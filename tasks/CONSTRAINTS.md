@@ -13,6 +13,9 @@
   - `attempt_count`
   - `attempt_summary`
   - `stop_reason`
+- `id` 必须符合格式：`TASK-YYYYMMDD-后缀`，且在 active 中不得重复。
 - 单任务同一时刻仅允许一个 owner：`Claude`、`Codex` 或 `User`。
 - 上下文达到 60% 必须触发摘要压缩，并在任务记录中写入压缩结果。
 - 每次模型路由必须记录：`route_model`、`route_reason`。
+- `project` 为必填，且只能使用字母/数字/`.`/`_`/`-`。
+- 关键字段不得使用占位值（如 `TBD`、`todo`、`pending`、`none`）。

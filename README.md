@@ -55,8 +55,10 @@
 
 - 会话开始检查：
   - `bash scripts/guardrails/session_start.sh tasks/active/<task>.md`
+  - 说明：仅接受 `tasks/active/*.md` 路径，且任务必须填写合法 `project`。
 - 会话结束检查：
   - `bash scripts/guardrails/session_end.sh tasks/active/<task>.md`
+  - 说明：关键交接字段必须非空；技术任务额外校验 `attempt_*` 字段。
 - 工作区巡检：
   - `bash scripts/guardrails/check_workspace.sh`
 - SQLite 巡检：
