@@ -32,6 +32,18 @@ for f in "$ROOT_DIR"/tasks/active/*.md; do
     fi
   done
 
+  status_val="$(read_field "$f" "status" | tr '[:upper:]' '[:lower:]')"
+  if [[ ! "$status_val" =~ ^(todo|doing|review|blocked)$ ]]; then
+    echo "[status 非法] $f -> $status_val"
+    task_fail=1
+  fi
+
+  owner_val="$(read_field "$f" "owner")"
+  if [[ ! "$owner_val" =~ ^(Claude|Codex|User)$ ]]; then
+    echo "[owner 非法] $f -> $owner_val"
+    task_fail=1
+  fi
+
   route_model_val="$(read_field "$f" "route_model")"
   route_reason_val="$(read_field "$f" "route_reason")"
   if is_placeholder_value "$route_model_val"; then
