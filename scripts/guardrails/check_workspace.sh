@@ -158,6 +158,14 @@ else
   echo "[告警] 缺少 skills 一致性脚本: $ROOT_DIR/scripts/guardrails/check_skills_consistency.sh"
 fi
 
+# 2.7) Skill post-install hook 软检查（仅告警，不阻断）
+if [[ ! -x "$ROOT_DIR/scripts/skills/post-install.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/post-install.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/skill-import-from-env.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/skill-import-from-env.sh"
+fi
+
 # 3) SQLite 登记巡检
 db_fail=0
 if ! command -v sqlite3 >/dev/null 2>&1; then

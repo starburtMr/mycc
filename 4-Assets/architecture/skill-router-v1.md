@@ -31,9 +31,10 @@
 ## 导入流程
 
 1. 安装器下载技能到各自管理器目录（外部流程）。
-2. 执行 `scripts/skills/skill-import.sh`，写入或更新注册表。
-3. 执行 `scripts/guardrails/check_skills_consistency.sh` 校验路径与字段。
-4. 会话启动时通过 guardrails 软检查告警异常。
+2. 安装后调用 `scripts/skills/post-install.sh`（推荐自动导入）。
+3. `post-install` 内部通过 `skill-import-from-env.sh` 生成 manifest 并写入注册表。
+4. 执行 `scripts/guardrails/check_skills_consistency.sh` 校验路径与字段。
+5. 会话启动时通过 guardrails 软检查告警异常。
 
 ## 路由规则
 

@@ -1,3 +1,22 @@
 version: 1
-updated_at: "2026-03-05T00:00:00Z"
-skills: []
+updated_at: '2026-03-05T01:55:26Z'
+skills:
+- skill_id: skill_router_meta
+  display_name: Skill Router Meta
+  category: general
+  source:
+    manager: manual-test
+    repo: local/mycc
+    version: 1.0.1
+  routing:
+    entry_shared: skills-core/README.md
+    entry_codex: .codex/hooks/skill-post-install.sh
+    entry_claude: ''
+    supports_codex: true
+    supports_claude: true
+  quality:
+    owner: system
+    last_verified_at: '2026-03-05'
+    test_status: unverified
+  notes:
+  - 自动导入自测样例-修复空值

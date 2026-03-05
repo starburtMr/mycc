@@ -77,7 +77,7 @@ registry["skills"] = sorted(
     registry["skills"],
     key=lambda x: str(x.get("skill_id", "")) if isinstance(x, dict) else "",
 )
-registry["updated_at"] = datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+registry["updated_at"] = datetime.datetime.now(datetime.UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 registry["version"] = int(registry.get("version", 1))
 
 with open(registry_path, "w", encoding="utf-8") as f:

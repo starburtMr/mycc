@@ -73,8 +73,11 @@ for item in skills:
         fail = 1
 
     for key in ["entry_shared", "entry_codex", "entry_claude"]:
-        path = str(routing.get(key, "")).strip()
-        if not path:
+        raw = routing.get(key, "")
+        if raw is None:
+            continue
+        path = str(raw).strip()
+        if not path or path.lower() == "none":
             continue
         abs_path = os.path.join(root, path)
         if not os.path.exists(abs_path):
