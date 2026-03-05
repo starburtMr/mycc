@@ -43,7 +43,7 @@ with open(registry_path, "r", encoding="utf-8") as f:
 with open(manifest_path, "r", encoding="utf-8") as f:
     manifest = yaml.safe_load(f) or {}
 
-required_top = ["skill_id", "display_name", "category", "source", "routing", "quality"]
+required_top = ["skill_id", "display_name", "category", "source", "routing", "quality", "governance"]
 for key in required_top:
     if key not in manifest:
         print(f"manifest 缺少字段: {key}")
@@ -59,6 +59,21 @@ for key in ["supports_codex", "supports_claude"]:
     if key not in routing or not isinstance(routing[key], bool):
         print(f"routing.{key} 缺失或不是布尔值")
         sys.exit(2)
+
+governance = manifest.get("governance", {})
+for key in ["requires_auth", "read_only"]:
+    if key not in governance or not isinstance(governance[key], bool):
+        print(f"governance.{key} 缺失或不是布尔值")
+        sys.exit(2)
+
+danger = str(governance.get("danger_level", "")).strip().lower()
+if danger not in {"low", "medium", "high"}:
+    print(f"governance.danger_level 非法: {danger}")
+    sys.exit(2)
+
+if not str(governance.get("health_check_cmd", "")).strip():
+    print("governance.health_check_cmd 不能为空")
+    sys.exit(2)
 
 if "skills" not in registry or not isinstance(registry["skills"], list):
     registry["skills"] = []

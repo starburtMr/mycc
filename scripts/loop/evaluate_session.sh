@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SESSION_DIR="${1:-}"
 TASK_FILE="${2:-}"
 TEST_CMD="${TEST_CMD:-}"
+RUN_ID="${RUN_ID:-}"
 
 if [[ -z "$SESSION_DIR" || -z "$TASK_FILE" ]]; then
   echo "用法: bash scripts/loop/evaluate_session.sh <session_dir> <task_file>"
@@ -32,12 +33,12 @@ if [[ -n "$TEST_CMD" ]]; then
   fi
 fi
 
-python3 - "$SESSION_DIR/eval.json" "$workspace_pass" "$tests_required" "$tests_pass" "$tests_status" "$TASK_FILE" <<'PY'
+python3 - "$SESSION_DIR/eval.json" "$workspace_pass" "$tests_required" "$tests_pass" "$tests_status" "$TASK_FILE" "$RUN_ID" <<'PY'
 import json
 import sys
 from datetime import datetime, UTC
 
-out, workspace_pass, tests_required, tests_pass, tests_status, task_file = sys.argv[1:]
+out, workspace_pass, tests_required, tests_pass, tests_status, task_file, run_id = sys.argv[1:]
 workspace_pass = workspace_pass == "true"
 tests_required = tests_required == "true"
 tests_pass = tests_pass == "true"
@@ -47,6 +48,7 @@ style_score = 0.7 if hard_pass else 0.4
 
 data = {
     "generated_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+    "run_id": run_id or None,
     "task_file": task_file,
     "pass": hard_pass,
     "hard_checks": {

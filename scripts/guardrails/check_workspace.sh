@@ -203,6 +203,16 @@ if [[ ! -x "$ROOT_DIR/scripts/integrations/web_search.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/web_search.sh"
 fi
 
+# 2.10) 能力契约软检查（仅告警，不阻断）
+if [[ -x "$ROOT_DIR/scripts/guardrails/check_capability_contracts.sh" ]]; then
+  if ! bash "$ROOT_DIR/scripts/guardrails/check_capability_contracts.sh" >/tmp/mycc_capability_check.log 2>&1; then
+    echo "[告警] 能力契约检查失败"
+    sed -n '1,20p' /tmp/mycc_capability_check.log
+  fi
+else
+  echo "[告警] 缺少能力契约脚本: $ROOT_DIR/scripts/guardrails/check_capability_contracts.sh"
+fi
+
 # 3) SQLite 登记巡检
 db_fail=0
 if ! command -v sqlite3 >/dev/null 2>&1; then

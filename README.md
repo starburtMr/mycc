@@ -139,3 +139,10 @@
 - 执行内容：脚本语法检查、`check_workspace`、SQLite 巡检、`self_check`
 - 目标：把会话规范从“人工执行”升级为“合并前自动闸门”
 
+## 执行治理增强
+
+- 能力契约检查：`bash scripts/guardrails/check_capability_contracts.sh`
+- 写操作闸门：`bash scripts/guardrails/confirm_write_action.sh --action "<name>"`
+  需要：`WRITE_ACTION_APPROVED=1` 与 `WRITE_ACTION_TOKEN=<token>`
+- 闭环证据链：`run_closed_loop.sh` 会生成 `run_manifest.json` 与 `tool_calls.ndjson`
+

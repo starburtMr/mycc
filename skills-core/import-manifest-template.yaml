@@ -16,5 +16,10 @@ quality:
   owner: cc
   last_verified_at: "2026-03-05"
   test_status: unverified
+governance:
+  requires_auth: false
+  read_only: true
+  danger_level: low
+  health_check_cmd: bash scripts/guardrails/check_skills_consistency.sh
 notes:
   - 首次导入模板，请修改为真实值。

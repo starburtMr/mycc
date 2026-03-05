@@ -6,6 +6,8 @@ TASK_FILE="${1:-}"
 SESSION_ID="${2:-session-$(date +%Y%m%dT%H%M%S)}"
 SESSION_DIR="$ROOT_DIR/3-Thinking/sessions/$SESSION_ID"
 POLICY_STAGING="$ROOT_DIR/0-System/policy/staging-rules.md"
+RUN_ID="run-$(date +%Y%m%dT%H%M%S)-$RANDOM"
+TOOL_LOG="$ROOT_DIR/scripts/loop/log_tool_call.sh"
 
 if [[ -z "$TASK_FILE" ]]; then
   echo "用法: bash scripts/loop/run_closed_loop.sh tasks/active/<task>.md [session_id]"
@@ -24,8 +26,27 @@ fi
 
 mkdir -p "$SESSION_DIR/logs"
 
+python3 - "$SESSION_DIR/run_manifest.json" "$RUN_ID" "$SESSION_ID" "$TASK_FILE" <<'PY'
+import json
+import sys
+from datetime import datetime, UTC
+
+out, run_id, session_id, task_file = sys.argv[1:]
+data = {
+  "run_id": run_id,
+  "session_id": session_id,
+  "task_file": task_file,
+  "started_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+  "status": "running",
+}
+with open(out, "w", encoding="utf-8") as f:
+  json.dump(data, f, ensure_ascii=False, indent=2)
+PY
+
 # 1) PLAN 前置闸门
+bash "$TOOL_LOG" "$SESSION_DIR" "guardrail" "session_start.sh" "start" "会话开始闸门"
 bash "$ROOT_DIR/scripts/guardrails/session_start.sh" "$TASK_FILE" >"$SESSION_DIR/logs/session_start.log" 2>&1
+bash "$TOOL_LOG" "$SESSION_DIR" "guardrail" "session_start.sh" "ok" "会话开始闸门通过"
 
 # 2) 记录本轮输入
 cat > "$SESSION_DIR/input.md" <<INPUT
@@ -60,7 +81,9 @@ cat > "$SESSION_DIR/execute.md" <<'EXEC'
 EXEC
 
 # 4) 结构化评估
-bash "$ROOT_DIR/scripts/loop/evaluate_session.sh" "$SESSION_DIR" "$TASK_FILE"
+bash "$TOOL_LOG" "$SESSION_DIR" "loop" "evaluate_session.sh" "start" ""
+RUN_ID="$RUN_ID" bash "$ROOT_DIR/scripts/loop/evaluate_session.sh" "$SESSION_DIR" "$TASK_FILE"
+bash "$TOOL_LOG" "$SESSION_DIR" "loop" "evaluate_session.sh" "ok" "输出 eval.json"
 
 # 5) 反思与规则建议
 python3 - "$SESSION_DIR/eval.json" "$SESSION_DIR/reflection.md" "$SESSION_ID" <<'PY'
@@ -123,5 +146,21 @@ PY
 EOF_STAGING
 fi
 
+python3 - "$SESSION_DIR/run_manifest.json" "$RUN_ID" <<'PY'
+import json
+import sys
+from datetime import datetime, UTC
+
+path, run_id = sys.argv[1:]
+with open(path, "r", encoding="utf-8") as f:
+    data = json.load(f)
+data["run_id"] = run_id
+data["finished_at"] = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+data["status"] = "completed"
+with open(path, "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+PY
+
 echo "闭环完成: $SESSION_DIR"
+echo "run_id: $RUN_ID"
 echo "下一步：执行结束前可手动运行 session_end 校验"
