@@ -158,6 +158,17 @@ else
   echo "[告警] 缺少 skills 一致性脚本: $ROOT_DIR/scripts/guardrails/check_skills_consistency.sh"
 fi
 
+# 2.6.1) Skill 目录结构硬检查（阻断）
+skill_structure_fail=0
+if [[ -x "$ROOT_DIR/scripts/guardrails/check_skill_structure.sh" ]]; then
+  if ! bash "$ROOT_DIR/scripts/guardrails/check_skill_structure.sh"; then
+    skill_structure_fail=1
+  fi
+else
+  echo "[告警] 缺少 skills 目录结构脚本: $ROOT_DIR/scripts/guardrails/check_skill_structure.sh"
+  skill_structure_fail=1
+fi
+
 # 2.7) Skill post-install hook 软检查（仅告警，不阻断）
 if [[ ! -x "$ROOT_DIR/scripts/skills/post-install.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/post-install.sh"
@@ -167,6 +178,12 @@ if [[ ! -x "$ROOT_DIR/scripts/skills/skill-import-from-env.sh" ]]; then
 fi
 if [[ ! -x "$ROOT_DIR/scripts/skills/register-skill.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/register-skill.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/init-skill.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/init-skill.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/guardrails/check_skill_structure.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/guardrails/check_skill_structure.sh"
 fi
 
 # 2.8) 自动进化闭环软检查（仅告警，不阻断）
@@ -262,7 +279,7 @@ elif [[ $db_fail -eq 0 ]]; then
   db_fail=1
 fi
 
-if [[ $task_fail -eq 0 && $tooling_fail -eq 0 && $db_fail -eq 0 ]]; then
+if [[ $task_fail -eq 0 && $tooling_fail -eq 0 && $db_fail -eq 0 && $skill_structure_fail -eq 0 ]]; then
   echo "[guardrails] 巡检通过"
   exit 0
 fi

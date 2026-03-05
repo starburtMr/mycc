@@ -52,6 +52,16 @@
 - 项目工具白名单见 `2-Projects/<project-name>/context/TOOLING_PROFILE.md`。
 - 执行任务前必须先完成 EvoMap 经验检索，检索失败不得进入执行阶段。
 
+## Skill 创建约定（系统级）
+
+- 本系统后续创建任何 Skill（不区分 Claude/Codex）都必须先执行：`bash scripts/skills/init-skill.sh <skill-name>`。
+- Skill 目录必须统一放在：`skills-core/skills/<skill-name>/`。
+- 每个 Skill 必须包含：`SKILL.md`，以及四个子目录（允许为空）：`agents/`、`scripts/`、`references/`、`assets/`。
+- 创建后必须注册到 `skills-core/skill-registry.yaml`，并通过：
+  - `bash scripts/guardrails/check_skills_consistency.sh`
+  - `bash scripts/guardrails/check_skill_structure.sh`
+- 禁止手工绕过脚手架直接创建不合规目录结构。
+
 ## EvoMap 只读规则
 
 - EvoMap 仅用于查询经验，不用于注册节点或接取任务。

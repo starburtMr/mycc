@@ -91,12 +91,14 @@
 ## Skill Router（跨管理器标准化）
 
 - 注册真源：`skills-core/skill-registry.yaml`
+- 新建 skill 脚手架：`bash scripts/skills/init-skill.sh <skill-name>`（强制目录骨架）
 - 自动入口：`bash scripts/skills/post-install.sh`（推荐）
 - 显式入口：`bash scripts/skills/register-skill.sh ...`
 - 环境变量导入：`bash scripts/skills/skill-import-from-env.sh`
 - 手工导入脚本：`bash scripts/skills/skill-import.sh <manifest.yaml>`
 - 一致性校验：`bash scripts/guardrails/check_skills_consistency.sh`
-- 工作区巡检已内置 skills 软检查（告警不阻断）
+- 目录结构强校验：`bash scripts/guardrails/check_skill_structure.sh`
+- 工作区巡检已内置 skills 检查（目录结构违规会阻断）
 - Codex wrapper：`.codex/hooks/skill-post-install.sh`
 - 详细说明见：`skills-core/README.md`
 - 治理规范见：`4-Assets/architecture/skill-governance-v1.md`

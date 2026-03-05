@@ -10,15 +10,19 @@
 - `skills-core/skill-registry.yaml`：技能注册总表（唯一真源）。
 - `skills-core/skills/`：共享 skill 包（建议包含 `SKILL.md`）。
 - `skills-core/templates/skill-package/`：skill 与 manifest 模板。
+- `scripts/skills/init-skill.sh`：初始化标准 skill 目录（强制目录骨架）。
 - `skills-core/import-manifest-template.yaml`：导入清单模板。
 - `skills-core/compat-matrix-template.yaml`：兼容矩阵模板。
 - `scripts/skills/skill-import.sh`：导入脚本（新增或更新注册项）。
 - `scripts/skills/register-skill.sh`：统一注册入口（推荐）。
 - `scripts/guardrails/check_skills_consistency.sh`：一致性校验脚本。
+- `scripts/guardrails/check_skill_structure.sh`：目录结构强校验脚本。
 
 ## 标准流程
 
-1. 通过任意 skill 管理器安装技能到本地目录。
+1. 新建 skill 时先初始化目录骨架（强制）：
+   - `bash scripts/skills/init-skill.sh <skill-name>`
+2. 通过任意 skill 管理器安装技能到本地目录。
 2. 安装后调用统一入口（推荐）：
    - `bash scripts/skills/post-install.sh`（通过环境变量自动导入）
    - 或 `bash scripts/skills/register-skill.sh ...`（显式参数导入）
@@ -27,6 +31,7 @@
    - `bash scripts/skills/skill-import.sh /tmp/<skill>.yaml`
 4. 执行一致性校验：
    - `bash scripts/guardrails/check_skills_consistency.sh`
+   - `bash scripts/guardrails/check_skill_structure.sh`
 5. 执行工作区巡检：
    - `bash scripts/guardrails/check_workspace.sh`
 
@@ -62,6 +67,7 @@ bash scripts/skills/register-skill.sh \
 
 ## 保证机制
 
+- 每个 skill 目录必须存在：`agents/`、`scripts/`、`references/`、`assets/`（可为空）。
 - 每个技能必须有 `skill_id`，并写明 `supports_codex`/`supports_claude`。
 - 若声明支持某平台，必须提供 `entry_<platform>` 或 `entry_shared`。
 - 路径不存在、字段非法、重复 ID 会在一致性校验时报错。

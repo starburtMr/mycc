@@ -1,0 +1,24 @@
+skill_id: your_skill_id
+display_name: 你的技能名
+category: engineering
+source:
+  manager: manual
+  repo: local
+  version: "0.1.0"
+routing:
+  entry_shared: skills-core/skills/obsidian-capture/SKILL.md
+  entry_codex: ""
+  entry_claude: ""
+  supports_codex: true
+  supports_claude: true
+quality:
+  owner: cc
+  last_verified_at: "2026-03-05"
+  test_status: unverified
+governance:
+  requires_auth: false
+  read_only: true
+  danger_level: low
+  health_check_cmd: bash scripts/guardrails/check_skills_consistency.sh
+notes:
+  - 使用模板创建，请补齐真实信息。

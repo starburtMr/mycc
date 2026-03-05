@@ -21,11 +21,13 @@ jobs:
       - name: Shell syntax checks
         run: |
           bash -n scripts/guardrails/check_workspace.sh
+          bash -n scripts/guardrails/check_skill_structure.sh
           bash -n scripts/guardrails/check_capability_contracts.sh
           bash -n scripts/guardrails/confirm_write_action.sh
           bash -n scripts/guardrails/self_check.sh
           bash -n scripts/guardrails/session_start.sh
           bash -n scripts/guardrails/session_end.sh
+          bash -n scripts/skills/init-skill.sh
           bash -n scripts/skills/register-skill.sh
           bash -n scripts/loop/evaluate_session.sh
           bash -n scripts/loop/log_tool_call.sh
