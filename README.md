@@ -92,10 +92,13 @@
 
 - 注册真源：`skills-core/skill-registry.yaml`
 - 新建 skill 脚手架：`bash scripts/skills/init-skill.sh <skill-name>`（强制目录骨架）
+- 隔离区导入：`bash scripts/skills/quarantine-skill.sh <src_dir> <skill-name>`
+- 隔离区晋升：`bash scripts/skills/promote-skill.sh <skill-name>`
 - 自动入口：`bash scripts/skills/post-install.sh`（推荐）
 - 显式入口：`bash scripts/skills/register-skill.sh ...`
 - 环境变量导入：`bash scripts/skills/skill-import-from-env.sh`
 - 手工导入脚本：`bash scripts/skills/skill-import.sh <manifest.yaml>`
+- 默认路由解析：`bash scripts/skills/resolve-active-skills.sh <codex|claude>`
 - 一致性校验：`bash scripts/guardrails/check_skills_consistency.sh`
 - 目录结构强校验：`bash scripts/guardrails/check_skill_structure.sh`
 - 工作区巡检已内置 skills 检查（目录结构违规会阻断）
@@ -108,9 +111,23 @@
 
 - 闭环入口：`bash scripts/loop/run_closed_loop.sh tasks/active/<task>.md`
 - 结构化评估：`bash scripts/loop/evaluate_session.sh <session_dir> tasks/active/<task>.md`
+- 月度 KPI：`bash scripts/loop/monthly_kpi.sh`
+- 统一 Adapter（plan/act/review/memory）：`python3 scripts/adapters/agent_adapter.py --help`
 - 规则分层：`0-System/policy/staging-rules.md`、`stable-rules.md`、`archive-rules.md`
 - 规则决策日志：`0-System/policy/decision-log.md`
 - 架构说明：`4-Assets/architecture/evolution-loop-mvp.md`
+
+## 回归基准
+
+- 入口：`bash scripts/benchmark/run_regression.sh`
+- 用例：`benchmarks/cases/smoke.list`
+- 说明：`benchmarks/README.md`
+
+## 记忆系统 v2（分层）
+
+- 初始化：`bash memory/scripts/init_memory_db.sh`
+- 升级到 v2：`bash memory/scripts/migrate_memory_v2.sh`
+- 巡检：`bash memory/scripts/run_memory_checks.sh`
 
 ## Agent-Reach 受限接入
 

@@ -54,6 +54,28 @@ for s in skills:
     if not cmd:
         print(f"[capability] {sid} governance.health_check_cmd 不能为空")
         ok = False
+    br = str(g.get("blast_radius", "")).strip().lower()
+    if br not in {"readonly", "project_write", "external_side_effect"}:
+        print(f"[capability] {sid} governance.blast_radius 非法: {br}")
+        ok = False
+
+    lifecycle = str(s.get("lifecycle_status", "")).strip().lower()
+    if lifecycle not in {"draft", "verified", "deprecated", "archived"}:
+        print(f"[capability] {sid} lifecycle_status 非法: {lifecycle}")
+        ok = False
+
+    routing = s.get("routing")
+    if not isinstance(routing, dict):
+        print(f"[capability] {sid} 缺少 routing")
+        ok = False
+    else:
+        de = routing.get("default_enabled")
+        if not isinstance(de, bool):
+            print(f"[capability] {sid} routing.default_enabled 必须是布尔值")
+            ok = False
+        elif lifecycle != "verified" and de:
+            print(f"[capability] {sid} 非 verified skill 不能 default_enabled")
+            ok = False
 
 if not ok:
     sys.exit(1)

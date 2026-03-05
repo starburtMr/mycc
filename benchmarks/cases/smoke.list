@@ -1,0 +1,6 @@
+# name|command
+workspace_guardrails|bash scripts/guardrails/check_workspace.sh
+skills_consistency|bash scripts/guardrails/check_skills_consistency.sh
+skills_structure|bash scripts/guardrails/check_skill_structure.sh
+memory_checks|bash memory/scripts/run_memory_checks.sh
+obsidian_diagnose|bash scripts/integrations/obsidian/diagnose.sh /tmp/obsidian-bench-diagnose.json

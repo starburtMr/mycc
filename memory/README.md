@@ -69,6 +69,33 @@
 - `ddl_sql`
 - `created_at`
 
+### 4.4 `fact_memory`（事实记忆）
+
+用于长期稳定事实，要求可追溯来源。
+
+关键字段：
+
+- `key` / `value`
+- `source`（来源）
+- `source_task_id`
+- `confidence`（0~1）
+- `ttl_days`
+- `expires_at`
+
+### 4.5 `working_memory`（工作记忆）
+
+用于会话/阶段性上下文，生命周期更短。
+
+关键字段：
+
+- `session_id`
+- `topic` / `content`
+- `source`
+- `source_task_id`
+- `confidence`（0~1）
+- `ttl_days`
+- `expires_at`
+
 ## 5. 强制流程（建表/改表）
 
 1. 创建或修改业务表。
@@ -131,6 +158,12 @@
 
 ```bash
 bash memory/scripts/init_memory_db.sh
+```
+
+迁移已存在数据库到 v2：
+
+```bash
+bash memory/scripts/migrate_memory_v2.sh
 ```
 
 2. 运行巡检

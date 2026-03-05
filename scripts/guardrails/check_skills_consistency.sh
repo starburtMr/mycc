@@ -66,6 +66,10 @@ for item in skills:
     if not isinstance(supports_codex, bool) or not isinstance(supports_claude, bool):
         print(f"[skills] {sid} supports_codex/supports_claude 必须是布尔值")
         fail = 1
+    default_enabled = routing.get("default_enabled")
+    if not isinstance(default_enabled, bool):
+        print(f"[skills] {sid} routing.default_enabled 必须是布尔值")
+        fail = 1
 
     has_any_platform = bool(supports_codex or supports_claude)
     if not has_any_platform:
@@ -90,6 +94,24 @@ for item in skills:
     if supports_claude and not str(routing.get("entry_claude", "")).strip() and not str(routing.get("entry_shared", "")).strip():
         print(f"[skills] {sid} 标记支持 Claude，但无 entry_claude/entry_shared")
         fail = 1
+
+    lifecycle = str(item.get("lifecycle_status", "")).strip().lower()
+    if lifecycle not in {"draft", "verified", "deprecated", "archived"}:
+        print(f"[skills] {sid} lifecycle_status 非法: {lifecycle}")
+        fail = 1
+    if lifecycle != "verified" and default_enabled is True:
+        print(f"[skills] {sid} 仅 verified 允许 default_enabled=true")
+        fail = 1
+
+    governance = item.get("governance", {})
+    if not isinstance(governance, dict):
+        print(f"[skills] {sid} 缺少 governance")
+        fail = 1
+    else:
+        br = str(governance.get("blast_radius", "")).strip().lower()
+        if br not in {"readonly", "project_write", "external_side_effect"}:
+            print(f"[skills] {sid} governance.blast_radius 非法: {br}")
+            fail = 1
 
 if fail:
     sys.exit(1)

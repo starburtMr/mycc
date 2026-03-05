@@ -57,6 +57,9 @@
 - 本系统后续创建任何 Skill（不区分 Claude/Codex）都必须先执行：`bash scripts/skills/init-skill.sh <skill-name>`。
 - Skill 目录必须统一放在：`skills-core/skills/<skill-name>/`。
 - 每个 Skill 必须包含：`SKILL.md`，以及四个子目录（允许为空）：`agents/`、`scripts/`、`references/`、`assets/`。
+- 新 Skill 默认进入隔离流程：`quarantine -> promote -> register -> verified`。
+- `lifecycle_status != verified` 的 Skill 禁止默认路由（`routing.default_enabled` 必须为 `false`）。
+- 每个 Skill 必须声明 `governance.blast_radius`（`readonly|project_write|external_side_effect`）。
 - 创建后必须注册到 `skills-core/skill-registry.yaml`，并通过：
   - `bash scripts/guardrails/check_skills_consistency.sh`
   - `bash scripts/guardrails/check_skill_structure.sh`

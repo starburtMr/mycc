@@ -16,7 +16,7 @@ jobs:
       - name: Install system deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y jq sqlite3 ripgrep
+          sudo apt-get install -y jq sqlite3 ripgrep python3-yaml
 
       - name: Shell syntax checks
         run: |
@@ -29,9 +29,16 @@ jobs:
           bash -n scripts/guardrails/session_end.sh
           bash -n scripts/skills/init-skill.sh
           bash -n scripts/skills/register-skill.sh
+          bash -n scripts/skills/skill-import-from-env.sh
+          bash -n scripts/skills/quarantine-skill.sh
+          bash -n scripts/skills/promote-skill.sh
+          bash -n scripts/skills/resolve-active-skills.sh
+          bash -n scripts/skills/monthly_skill_review.sh
+          bash -n scripts/benchmark/run_regression.sh
           bash -n scripts/loop/evaluate_session.sh
           bash -n scripts/loop/log_tool_call.sh
           bash -n scripts/loop/run_closed_loop.sh
+          bash -n scripts/loop/monthly_kpi.sh
           bash -n scripts/integrations/web_search.sh
           bash -n scripts/integrations/obsidian/diagnose.sh
           bash -n scripts/integrations/obsidian/bootstrap.sh
@@ -42,10 +49,13 @@ jobs:
           bash -n scripts/integrations/agent_reach/install.sh
           bash -n scripts/integrations/agent_reach/update.sh
           bash -n scripts/integrations/agent_reach/diagnose.sh
+          bash -n memory/scripts/migrate_memory_v2.sh
+          python3 -m py_compile scripts/adapters/agent_adapter.py
 
       - name: Workspace checks
         run: |
           bash scripts/guardrails/check_capability_contracts.sh
           bash scripts/guardrails/check_workspace.sh
+          bash scripts/benchmark/run_regression.sh
           bash memory/scripts/run_memory_checks.sh
           bash scripts/guardrails/self_check.sh

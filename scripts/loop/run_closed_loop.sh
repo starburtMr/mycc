@@ -97,29 +97,47 @@ with open(in_file, "r", encoding="utf-8") as f:
 
 passed = bool(data.get("pass"))
 notes = data.get("notes", [])
+generated = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 lines = [
     "# Reflection",
     "",
+    "## Session Meta",
+    "",
     f"- session_id: {session_id}",
-    f"- generated_at: {datetime.now(UTC).replace(microsecond=0).isoformat().replace('+00:00', 'Z')}",
+    f"- generated_at: {generated}",
     f"- hard_pass: {'true' if passed else 'false'}",
     "",
-    "## 结论",
-    "",
-    "- 本轮通过硬评估，可提炼规则进入 staging。" if passed else "- 本轮未通过硬评估，先修复问题，禁止规则晋级。",
-    "",
-    "## 观察",
+    "## Failures",
     "",
 ]
-for n in notes:
-    lines.append(f"- {n}")
+if notes:
+    for n in notes:
+        lines += [
+            "- trigger: 评估阶段",
+            f"- failure_cause: {n}",
+            "- evidence_file: eval.json",
+            "",
+        ]
+else:
+    lines += [
+        "- trigger: none",
+        "- failure_cause: none",
+        "- evidence_file: eval.json",
+        "",
+    ]
 
 lines += [
+    "## Candidate Rules (Executable)",
     "",
-    "## 候选规则（可执行）",
+    "- rule_statement: 如果任务进入方案评估阶段且存在多方案分歧，则必须给出 1 个推荐方案与回滚路径。",
+    "- verify_plan: 检查交付内容是否同时包含 `推荐方案` 和 `回滚步骤`。",
+    "- owner: Codex",
+    f"- next_action: {'promote' if passed else 'revise'}",
     "",
-    "- 如果任务存在多方案分歧，先输出 1 个推荐方案 + 回滚路径。",
-    "- 任何规则晋级前，至少 3 次会话验证通过。",
+    "- rule_statement: 非 verified skill 不得进入默认路由。",
+    "- verify_plan: 运行 check_skills_consistency.sh，确保 default_enabled 仅对 verified 为 true。",
+    "- owner: Codex",
+    "- next_action: promote",
 ]
 
 with open(out_file, "w", encoding="utf-8") as f:
@@ -137,9 +155,9 @@ PY
   cat >> "$POLICY_STAGING" <<EOF_STAGING
 - id: RULE-$(date +%Y%m%d)-$SESSION_ID
 - source_session: $SESSION_ID
-- proposal: 如果任务存在多方案分歧，先输出 1 个推荐方案 + 回滚路径。
-- trigger: 任务进入方案评估阶段
-- verify: 本轮 eval.json 的 pass=true，且交付包含回滚说明
+- proposal: 如果任务进入方案评估阶段且存在多方案分歧，则必须给出 1 个推荐方案与回滚路径。
+- trigger: 任务进入方案评估阶段且存在多方案分歧
+- verify: 检查交付是否包含推荐方案与回滚步骤
 - result: $PASS_FLAG
 - next_action: revise
 

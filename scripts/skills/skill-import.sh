@@ -59,6 +59,17 @@ for key in ["supports_codex", "supports_claude"]:
     if key not in routing or not isinstance(routing[key], bool):
         print(f"routing.{key} 缺失或不是布尔值")
         sys.exit(2)
+if "default_enabled" not in routing or not isinstance(routing["default_enabled"], bool):
+    print("routing.default_enabled 缺失或不是布尔值")
+    sys.exit(2)
+
+lifecycle = str(manifest.get("lifecycle_status", "")).strip().lower()
+if lifecycle not in {"draft", "verified", "deprecated", "archived"}:
+    print(f"lifecycle_status 非法: {lifecycle}")
+    sys.exit(2)
+if lifecycle != "verified" and routing.get("default_enabled") is True:
+    print("仅 verified skill 允许 routing.default_enabled=true")
+    sys.exit(2)
 
 governance = manifest.get("governance", {})
 for key in ["requires_auth", "read_only"]:
@@ -73,6 +84,10 @@ if danger not in {"low", "medium", "high"}:
 
 if not str(governance.get("health_check_cmd", "")).strip():
     print("governance.health_check_cmd 不能为空")
+    sys.exit(2)
+blast_radius = str(governance.get("blast_radius", "")).strip().lower()
+if blast_radius not in {"readonly", "project_write", "external_side_effect"}:
+    print(f"governance.blast_radius 非法: {blast_radius}")
     sys.exit(2)
 
 if "skills" not in registry or not isinstance(registry["skills"], list):

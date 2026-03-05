@@ -11,10 +11,13 @@
 - `skills-core/skills/`：共享 skill 包（建议包含 `SKILL.md`）。
 - `skills-core/templates/skill-package/`：skill 与 manifest 模板。
 - `scripts/skills/init-skill.sh`：初始化标准 skill 目录（强制目录骨架）。
+- `scripts/skills/quarantine-skill.sh`：将外部 skill 放入隔离区。
+- `scripts/skills/promote-skill.sh`：将隔离区 skill 晋升到主技能区。
 - `skills-core/import-manifest-template.yaml`：导入清单模板。
 - `skills-core/compat-matrix-template.yaml`：兼容矩阵模板。
 - `scripts/skills/skill-import.sh`：导入脚本（新增或更新注册项）。
 - `scripts/skills/register-skill.sh`：统一注册入口（推荐）。
+- `scripts/skills/resolve-active-skills.sh`：解析默认可路由技能。
 - `scripts/guardrails/check_skills_consistency.sh`：一致性校验脚本。
 - `scripts/guardrails/check_skill_structure.sh`：目录结构强校验脚本。
 
@@ -22,17 +25,20 @@
 
 1. 新建 skill 时先初始化目录骨架（强制）：
    - `bash scripts/skills/init-skill.sh <skill-name>`
-2. 通过任意 skill 管理器安装技能到本地目录。
-2. 安装后调用统一入口（推荐）：
+2. 外部来源先进入隔离区：
+   - `bash scripts/skills/quarantine-skill.sh <src_dir> <skill-name>`
+3. 结构通过后晋升：
+   - `bash scripts/skills/promote-skill.sh <skill-name>`
+4. 安装后调用统一入口（推荐）：
    - `bash scripts/skills/post-install.sh`（通过环境变量自动导入）
    - 或 `bash scripts/skills/register-skill.sh ...`（显式参数导入）
-3. 或者手工导入（兜底）：
+5. 或者手工导入（兜底）：
    - `cp skills-core/import-manifest-template.yaml /tmp/<skill>.yaml`
    - `bash scripts/skills/skill-import.sh /tmp/<skill>.yaml`
-4. 执行一致性校验：
+6. 执行一致性校验：
    - `bash scripts/guardrails/check_skills_consistency.sh`
    - `bash scripts/guardrails/check_skill_structure.sh`
-5. 执行工作区巡检：
+7. 执行工作区巡检：
    - `bash scripts/guardrails/check_workspace.sh`
 
 ## 自动导入最小示例
@@ -60,6 +66,9 @@ bash scripts/skills/register-skill.sh \
   --repo local/mycc \
   --version 1.0.0 \
   --entry-shared skills-core/skills/obsidian-capture/SKILL.md \
+  --lifecycle-status draft \
+  --default-enabled false \
+  --blast-radius project_write \
   --supports-codex true \
   --supports-claude true \
   --owner cc
@@ -69,6 +78,8 @@ bash scripts/skills/register-skill.sh \
 
 - 每个 skill 目录必须存在：`agents/`、`scripts/`、`references/`、`assets/`（可为空）。
 - 每个技能必须有 `skill_id`，并写明 `supports_codex`/`supports_claude`。
+- 非 `verified` skill 必须 `default_enabled=false`。
+- 每个 skill 必须声明 `governance.blast_radius`。
 - 若声明支持某平台，必须提供 `entry_<platform>` 或 `entry_shared`。
 - 路径不存在、字段非法、重复 ID 会在一致性校验时报错。
 - `check_workspace.sh` 已接入 skills 软检查，会输出告警。

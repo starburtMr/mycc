@@ -182,6 +182,18 @@ fi
 if [[ ! -x "$ROOT_DIR/scripts/skills/init-skill.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/init-skill.sh"
 fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/quarantine-skill.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/quarantine-skill.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/promote-skill.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/promote-skill.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/resolve-active-skills.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/resolve-active-skills.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/monthly_skill_review.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/monthly_skill_review.sh"
+fi
 if [[ ! -x "$ROOT_DIR/scripts/guardrails/check_skill_structure.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/guardrails/check_skill_structure.sh"
 fi
@@ -192,6 +204,9 @@ if [[ ! -x "$ROOT_DIR/scripts/loop/run_closed_loop.sh" ]]; then
 fi
 if [[ ! -x "$ROOT_DIR/scripts/loop/evaluate_session.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/loop/evaluate_session.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/loop/monthly_kpi.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/loop/monthly_kpi.sh"
 fi
 if [[ ! -f "$ROOT_DIR/0-System/policy/staging-rules.md" ]]; then
   echo "[告警] 缺少规则暂存区: $ROOT_DIR/0-System/policy/staging-rules.md"
@@ -221,6 +236,22 @@ if [[ ! -f "$ROOT_DIR/scripts/integrations/agent_reach/config.env.example" ]]; t
 fi
 if [[ ! -x "$ROOT_DIR/scripts/integrations/web_search.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/web_search.sh"
+fi
+
+# 2.12) 回归基准软检查（仅告警，不阻断）
+if [[ ! -x "$ROOT_DIR/scripts/benchmark/run_regression.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/benchmark/run_regression.sh"
+fi
+if [[ ! -f "$ROOT_DIR/benchmarks/cases/smoke.list" ]]; then
+  echo "[告警] 缺少回归用例: $ROOT_DIR/benchmarks/cases/smoke.list"
+fi
+
+# 2.13) Adapter 与记忆迁移软检查（仅告警，不阻断）
+if [[ ! -f "$ROOT_DIR/scripts/adapters/agent_adapter.py" ]]; then
+  echo "[告警] 缺少 adapter 入口: $ROOT_DIR/scripts/adapters/agent_adapter.py"
+fi
+if [[ ! -x "$ROOT_DIR/memory/scripts/migrate_memory_v2.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/memory/scripts/migrate_memory_v2.sh"
 fi
 
 # 2.11) Obsidian 绑定软检查（仅告警，不阻断）

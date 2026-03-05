@@ -25,22 +25,26 @@
   - `entry_claude`: Claude 入口（可为空）。
   - `supports_codex`: bool。
   - `supports_claude`: bool。
+  - `default_enabled`: bool（仅 verified 可为 true）。
+- `lifecycle_status`: draft/verified/deprecated/archived。
+- `governance.blast_radius`: readonly/project_write/external_side_effect。
 - `quality`: 质量信息（owner/last_verified_at/test_status）。
 - `notes`: 约束与已知问题。
 
 ## 导入流程
 
-1. 安装器下载技能到各自管理器目录（外部流程）。
-2. 安装后调用 `scripts/skills/post-install.sh`（推荐自动导入）。
-3. `post-install` 内部通过 `skill-import-from-env.sh` 生成 manifest 并写入注册表。
-4. 执行 `scripts/guardrails/check_skills_consistency.sh` 校验路径与字段。
-5. 会话启动时通过 guardrails 软检查告警异常。
+1. 外部 skill 先进入隔离区：`scripts/skills/quarantine-skill.sh`。
+2. 结构通过后晋升：`scripts/skills/promote-skill.sh`。
+3. 安装后调用 `scripts/skills/post-install.sh`（推荐自动导入）或 `register-skill.sh`。
+4. 执行 `check_skills_consistency.sh` + `check_skill_structure.sh`。
+5. 会话启动前通过 guardrails 执行检查。
 
 ## 路由规则
 
 - 同时支持 Claude 和 Codex：优先 `entry_shared`。
 - 单平台支持：回退到对应平台入口。
 - 双平台都缺入口：阻断执行并告警。
+- 仅 `verified + default_enabled=true` 参与默认路由。
 
 ## 失败策略
 

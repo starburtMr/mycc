@@ -11,3 +11,5 @@
 - Obsidian 全流程文档已落盘：配置、调用、校验、推送、排障。
 - 新增初始化脚本：`scripts/integrations/obsidian/bootstrap.sh`
 - 笔记标准已强制化：Frontmatter、类型路由、中文内容检查。
+- Skill 治理已升级：隔离区、生命周期、默认路由门禁、影响半径字段。
+- 评估闭环已升级：回归基准（smoke）与月度 KPI/Skill 评审脚本。

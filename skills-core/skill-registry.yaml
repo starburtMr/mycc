@@ -14,6 +14,8 @@ skills:
     entry_claude: ''
     supports_codex: true
     supports_claude: true
+    default_enabled: false
+  lifecycle_status: draft
   quality:
     owner: cc
     last_verified_at: '2026-03-05'
@@ -22,6 +24,7 @@ skills:
     requires_auth: false
     read_only: true
     danger_level: low
+    blast_radius: project_write
     health_check_cmd: bash scripts/guardrails/check_skills_consistency.sh
   notes:
   - 示范技能：Obsidian 笔记沉淀
@@ -38,6 +41,8 @@ skills:
     entry_claude: ''
     supports_codex: true
     supports_claude: true
+    default_enabled: false
+  lifecycle_status: draft
   quality:
     owner: system
     last_verified_at: '2026-03-05'
@@ -46,6 +51,7 @@ skills:
     requires_auth: false
     read_only: true
     danger_level: low
+    blast_radius: readonly
     health_check_cmd: bash scripts/guardrails/check_skills_consistency.sh
   notes:
   - 自动导入自测样例-修复空值

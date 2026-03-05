@@ -46,13 +46,20 @@ SKILL_OWNER="${SKILL_OWNER:-system}"
 SKILL_TEST_STATUS="${SKILL_TEST_STATUS:-unverified}"
 SKILL_NOTE="${SKILL_NOTE:-通过 post-install 自动导入}"
 SKILL_LAST_VERIFIED_AT="${SKILL_LAST_VERIFIED_AT:-$(date +%F)}"
+SKILL_REQUIRES_AUTH="${SKILL_REQUIRES_AUTH:-false}"
+SKILL_READ_ONLY="${SKILL_READ_ONLY:-true}"
+SKILL_DANGER_LEVEL="${SKILL_DANGER_LEVEL:-low}"
+SKILL_HEALTH_CHECK_CMD="${SKILL_HEALTH_CHECK_CMD:-bash scripts/guardrails/check_skills_consistency.sh}"
+SKILL_BLAST_RADIUS="${SKILL_BLAST_RADIUS:-readonly}"
+SKILL_LIFECYCLE_STATUS="${SKILL_LIFECYCLE_STATUS:-draft}"
+SKILL_DEFAULT_ENABLED="${SKILL_DEFAULT_ENABLED:-false}"
 
 if [[ ! "$SKILL_ID" =~ ^[a-z0-9._-]+$ ]]; then
   echo "SKILL_ID 非法（仅允许 a-z0-9._-）: $SKILL_ID"
   exit 2
 fi
 
-for v in SKILL_SUPPORTS_CODEX SKILL_SUPPORTS_CLAUDE; do
+for v in SKILL_SUPPORTS_CODEX SKILL_SUPPORTS_CLAUDE SKILL_REQUIRES_AUTH SKILL_READ_ONLY SKILL_DEFAULT_ENABLED; do
   val="${!v}"
   case "$val" in
     true|false) ;;
@@ -62,6 +69,32 @@ for v in SKILL_SUPPORTS_CODEX SKILL_SUPPORTS_CLAUDE; do
       ;;
   esac
 done
+
+case "$SKILL_DANGER_LEVEL" in
+  low|medium|high) ;;
+  *)
+    echo "SKILL_DANGER_LEVEL 非法（low/medium/high）: $SKILL_DANGER_LEVEL"
+    exit 2
+    ;;
+esac
+case "$SKILL_BLAST_RADIUS" in
+  readonly|project_write|external_side_effect) ;;
+  *)
+    echo "SKILL_BLAST_RADIUS 非法: $SKILL_BLAST_RADIUS"
+    exit 2
+    ;;
+esac
+case "$SKILL_LIFECYCLE_STATUS" in
+  draft|verified|deprecated|archived) ;;
+  *)
+    echo "SKILL_LIFECYCLE_STATUS 非法: $SKILL_LIFECYCLE_STATUS"
+    exit 2
+    ;;
+esac
+if [[ "$SKILL_LIFECYCLE_STATUS" != "verified" && "$SKILL_DEFAULT_ENABLED" == "true" ]]; then
+  echo "仅 verified skill 允许 SKILL_DEFAULT_ENABLED=true"
+  exit 2
+fi
 
 TMP_MANIFEST="$(mktemp)"
 trap 'rm -f "$TMP_MANIFEST"' EXIT
@@ -80,10 +113,18 @@ routing:
   entry_claude: "$SKILL_ENTRY_CLAUDE"
   supports_codex: $SKILL_SUPPORTS_CODEX
   supports_claude: $SKILL_SUPPORTS_CLAUDE
+  default_enabled: $SKILL_DEFAULT_ENABLED
+lifecycle_status: $SKILL_LIFECYCLE_STATUS
 quality:
   owner: $SKILL_OWNER
   last_verified_at: "$SKILL_LAST_VERIFIED_AT"
   test_status: $SKILL_TEST_STATUS
+governance:
+  requires_auth: $SKILL_REQUIRES_AUTH
+  read_only: $SKILL_READ_ONLY
+  danger_level: $SKILL_DANGER_LEVEL
+  blast_radius: $SKILL_BLAST_RADIUS
+  health_check_cmd: $SKILL_HEALTH_CHECK_CMD
 notes:
   - $SKILL_NOTE
 YAML

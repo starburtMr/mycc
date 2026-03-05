@@ -1,26 +1,32 @@
-# daily-reflection
+# daily-reflection（结构化）
 
-> 用途：每天汇总一次工作流优化建议。
-> 注意：本文件是“建议层”，不是规则真源。
+> 用途：每日复盘，沉淀可执行规则与可复用资产。
+> 注意：不写“更谨慎”等不可验证表述。
 
 ## 日期
 
 - date:
 
-## 今日高杠杆改进（最多 3 条）
+## 今日关键失效（最多 3 条）
 
-- 
+- trigger:
+- failure_cause:
+- impact:
+
+## 今日候选规则（最多 5 条）
+
+- rule_statement:
+- verify_plan:
+- expected_gain:
+- next_action: promote|revise|drop
 
 ## 今日可复用资产（最多 3 条）
 
-- 
+- asset_type: prompt|script|sop|adr
+- path:
+- reuse_scope:
 
-## 建议更新真源文件（最多 5 条）
+## 明日执行清单（最多 5 条）
 
-- target_file:
-- change:
-- reason:
-
-## 明日执行清单
-
-- 
+- action:
+- done_criteria:

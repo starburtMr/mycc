@@ -14,3 +14,6 @@
 - 默认写入：`CC-AGENT-SPACE/10-Tasks`
 - 推送前强制校验：`scripts/integrations/obsidian/validate_notes.sh`
 - 系统调用手册：`4-Assets/integrations/obsidian-system-playbook.md`
+- Skill 生命周期治理：`lifecycle_status/default_enabled/blast_radius/quarantine`
+- 回归基准入口：`bash scripts/benchmark/run_regression.sh`
+- 月度治理入口：`bash scripts/loop/monthly_kpi.sh` 与 `bash scripts/skills/monthly_skill_review.sh`

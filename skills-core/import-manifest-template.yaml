@@ -12,6 +12,8 @@ routing:
   entry_claude: .claude/skills/sample-skill/SKILL.md
   supports_codex: true
   supports_claude: true
+  default_enabled: false
+lifecycle_status: draft
 quality:
   owner: cc
   last_verified_at: "2026-03-05"
@@ -20,6 +22,7 @@ governance:
   requires_auth: false
   read_only: true
   danger_level: low
+  blast_radius: readonly
   health_check_cmd: bash scripts/guardrails/check_skills_consistency.sh
 notes:
   - 首次导入模板，请修改为真实值。

@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 IMPORTER="$ROOT_DIR/scripts/skills/skill-import.sh"
 CHECKER="$ROOT_DIR/scripts/guardrails/check_skills_consistency.sh"
+STRUCTURE_CHECKER="$ROOT_DIR/scripts/guardrails/check_skill_structure.sh"
 
 SKILL_ID=""
 DISPLAY_NAME=""
@@ -16,12 +17,15 @@ ENTRY_CODEX=""
 ENTRY_CLAUDE=""
 SUPPORTS_CODEX="true"
 SUPPORTS_CLAUDE="true"
+DEFAULT_ENABLED="false"
 OWNER="system"
 TEST_STATUS="unverified"
 NOTE="通过 register-skill.sh 导入"
+LIFECYCLE_STATUS="draft"
 REQUIRES_AUTH="false"
 READ_ONLY="true"
 DANGER_LEVEL="low"
+BLAST_RADIUS="readonly"
 HEALTH_CHECK_CMD="bash scripts/guardrails/check_skills_consistency.sh"
 
 while [[ $# -gt 0 ]]; do
@@ -37,12 +41,15 @@ while [[ $# -gt 0 ]]; do
     --entry-claude) ENTRY_CLAUDE="${2:-}"; shift 2 ;;
     --supports-codex) SUPPORTS_CODEX="${2:-}"; shift 2 ;;
     --supports-claude) SUPPORTS_CLAUDE="${2:-}"; shift 2 ;;
+    --default-enabled) DEFAULT_ENABLED="${2:-}"; shift 2 ;;
+    --lifecycle-status) LIFECYCLE_STATUS="${2:-}"; shift 2 ;;
     --owner) OWNER="${2:-}"; shift 2 ;;
     --test-status) TEST_STATUS="${2:-}"; shift 2 ;;
     --note) NOTE="${2:-}"; shift 2 ;;
     --requires-auth) REQUIRES_AUTH="${2:-}"; shift 2 ;;
     --read-only) READ_ONLY="${2:-}"; shift 2 ;;
     --danger-level) DANGER_LEVEL="${2:-}"; shift 2 ;;
+    --blast-radius) BLAST_RADIUS="${2:-}"; shift 2 ;;
     --health-check-cmd) HEALTH_CHECK_CMD="${2:-}"; shift 2 ;;
     *)
       echo "未知参数: $1" >&2
@@ -59,7 +66,7 @@ if [[ -z "$DISPLAY_NAME" ]]; then
   DISPLAY_NAME="$SKILL_ID"
 fi
 
-for b in SUPPORTS_CODEX SUPPORTS_CLAUDE REQUIRES_AUTH READ_ONLY; do
+for b in SUPPORTS_CODEX SUPPORTS_CLAUDE DEFAULT_ENABLED REQUIRES_AUTH READ_ONLY; do
   case "${!b}" in
     true|false) ;;
     *)
@@ -76,6 +83,26 @@ case "$DANGER_LEVEL" in
     exit 2
     ;;
 esac
+
+case "$BLAST_RADIUS" in
+  readonly|project_write|external_side_effect) ;;
+  *)
+    echo "BLAST_RADIUS 非法（readonly/project_write/external_side_effect）: $BLAST_RADIUS" >&2
+    exit 2
+    ;;
+esac
+
+case "$LIFECYCLE_STATUS" in
+  draft|verified|deprecated|archived) ;;
+  *)
+    echo "LIFECYCLE_STATUS 非法（draft/verified/deprecated/archived）: $LIFECYCLE_STATUS" >&2
+    exit 2
+    ;;
+esac
+if [[ "$LIFECYCLE_STATUS" != "verified" && "$DEFAULT_ENABLED" == "true" ]]; then
+  echo "仅 verified skill 允许 --default-enabled true" >&2
+  exit 2
+fi
 
 TMP_MANIFEST="$(mktemp)"
 trap 'rm -f "$TMP_MANIFEST"' EXIT
@@ -94,6 +121,8 @@ routing:
   entry_claude: "$ENTRY_CLAUDE"
   supports_codex: $SUPPORTS_CODEX
   supports_claude: $SUPPORTS_CLAUDE
+  default_enabled: $DEFAULT_ENABLED
+lifecycle_status: $LIFECYCLE_STATUS
 quality:
   owner: $OWNER
   last_verified_at: "$(date +%F)"
@@ -102,6 +131,7 @@ governance:
   requires_auth: $REQUIRES_AUTH
   read_only: $READ_ONLY
   danger_level: $DANGER_LEVEL
+  blast_radius: $BLAST_RADIUS
   health_check_cmd: $HEALTH_CHECK_CMD
 notes:
   - $NOTE
@@ -109,4 +139,7 @@ YAML
 
 bash "$IMPORTER" "$TMP_MANIFEST"
 bash "$CHECKER"
+if [[ -x "$STRUCTURE_CHECKER" ]]; then
+  bash "$STRUCTURE_CHECKER"
+fi
 echo "注册完成: $SKILL_ID"

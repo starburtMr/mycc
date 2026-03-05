@@ -11,6 +11,8 @@ routing:
   entry_claude: ""
   supports_codex: true
   supports_claude: true
+  default_enabled: false
+lifecycle_status: draft
 quality:
   owner: cc
   last_verified_at: "2026-03-05"
@@ -19,6 +21,7 @@ governance:
   requires_auth: false
   read_only: true
   danger_level: low
+  blast_radius: project_write
   health_check_cmd: bash scripts/guardrails/check_skills_consistency.sh
 notes:
   - 使用模板创建，请补齐真实信息。
