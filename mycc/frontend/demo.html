@@ -30,6 +30,10 @@
     .title { font-weight: 700; }
     .chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .chip { font-size: 12px; padding: 4px 8px; border-radius: 999px; background: var(--chip); color: #0369a1; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; border: 1px solid var(--line); background: #fff; color: var(--muted); }
+    .pill.live { border-color: #86efac; background: #f0fdf4; color: #166534; }
+    .pill.replay { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+    .pill.warn { border-color: #fde68a; background: #fffbeb; color: #92400e; }
 
     .layout { display: grid; grid-template-columns: 280px 1fr 320px; gap: 12px; padding: 12px; min-height: 0; }
     .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; min-height: 0; }
@@ -61,9 +65,14 @@
     .msg { max-width: 82%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
     .msg.user { margin-left: auto; background: #eefbff; border-color: #bfecff; }
     .msg-time { margin-top: 5px; font-size: 11px; color: var(--muted); }
+    .task-card-msg { max-width: 86%; border: 1px solid #bfdbfe; background: #f8fbff; border-radius: 12px; padding: 10px; }
+    .task-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+    .task-card-meta { color: var(--muted); font-size: 12px; margin-top: 6px; display: grid; gap: 4px; }
+    .task-card-actions { margin-top: 8px; }
 
     .composer { border-top: 1px solid var(--line); padding: 12px; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
     .composer input { width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); }
+    .composer select { padding: 11px 10px; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
 
     .btn { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
     .btn.primary { background: linear-gradient(135deg, #0ea5e9, #3b82f6); color: #fff; border: none; }
@@ -87,6 +96,13 @@
     .card .meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
     .card.status { border-color: #bfdbfe; background: #f8fbff; }
     .card.memory { border-color: #c7f0ff; background: #f7fdff; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+    .toolbar select, .toolbar input { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); font-size: 12px; }
+    .toolbar .spacer { flex: 1; }
+    .list { display: grid; gap: 8px; }
+    .row { border: 1px solid var(--line); border-radius: 10px; padding: 8px; background: #fff; }
+    .row-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .link-btn { color: #2563eb; cursor: pointer; text-decoration: underline; font-size: 12px; border: none; background: transparent; padding: 0; }
 
     .drawer { display: flex; flex-direction: column; }
     .drawer .section-body { display: grid; gap: 10px; }
@@ -121,6 +137,7 @@
         <div class="nav" id="nav">
           <button class="active" data-view="workbench">聊天工作台</button>
           <button data-view="task">任务详情</button>
+          <button data-view="skills">Skills</button>
           <button data-view="system">系统状态</button>
           <button data-view="memory">记忆视图</button>
         </div>
@@ -155,15 +172,42 @@
             <div class="chat-log" id="chatLog"></div>
           </div>
           <div class="composer">
-            <input id="composerInput" placeholder="在这里输入需求，系统会自动进入 run 账本..." />
-            <button class="btn" id="toTaskBtn">转任务</button>
+            <input id="composerInput" placeholder="在这里输入需求，系统会自动判断是否创建任务..." />
+            <select id="dispatchMode">
+              <option value="auto">Auto</option>
+              <option value="force_task">Force Task</option>
+              <option value="chat_only">Chat Only</option>
+            </select>
             <button class="btn primary" id="sendBtn">发送</button>
           </div>
+          <div class="meta" style="padding:0 14px 12px 14px;">说明：聊天页只展示任务摘要卡；阶段事件、工具调用、验证与记忆写入统一在任务页查看。</div>
         </section>
 
         <section class="view" id="task">
           <div class="section-head">任务详情 · tsk_20260305_x1</div>
           <div class="section-body">
+            <div class="toolbar">
+              <label>Run 选择：</label>
+              <select id="runSelect">
+                <option value="run_20260305_01">run_20260305_01（running）</option>
+                <option value="run_20260304_02">run_20260304_02（failed）</option>
+                <option value="run_20260304_01">run_20260304_01（completed）</option>
+              </select>
+              <span id="connPill" class="pill live">Connected · Live</span>
+              <span class="pill replay">Replayed to seq=128</span>
+              <span class="spacer"></span>
+              <button class="btn" id="replayFromSeqBtn" style="padding:6px 8px;font-size:12px;">从 seq 回放</button>
+              <button class="btn" id="jumpLatestBtn" style="padding:6px 8px;font-size:12px;">跳到最新</button>
+            </div>
+
+            <div class="toolbar">
+              <button class="btn" id="cancelRunBtn" style="padding:6px 8px;font-size:12px;">Cancel</button>
+              <button class="btn" id="retryRunBtn" style="padding:6px 8px;font-size:12px;">Retry</button>
+              <button class="btn" id="resumeRunBtn" style="padding:6px 8px;font-size:12px;">Resume</button>
+              <button class="btn" id="exportRunBtn" style="padding:6px 8px;font-size:12px;">Export</button>
+              <button class="btn" id="copyDebugBtn" style="padding:6px 8px;font-size:12px;">Copy Debug Bundle</button>
+            </div>
+
             <div class="card-grid" style="margin-bottom:10px;">
               <div class="card status">
                 <h4>任务状态</h4>
@@ -179,6 +223,18 @@
                 <h4>事件游标</h4>
                 <p>最后事件 seq：128</p>
                 <div class="meta">支持 after=128 回放</div>
+              </div>
+            </div>
+            <div class="card-grid" style="margin-bottom:10px;">
+              <div class="card" style="border-color:#fecaca;background:#fff7f7;">
+                <h4>失败原因（最近一次失败 run）</h4>
+                <p>code: TOOL_TIMEOUT · stage: EXECUTE · retryable: true</p>
+                <div class="meta">建议动作：Retry 或 Resume（checkpoint: cp_41）</div>
+              </div>
+              <div class="card">
+                <h4>EVAL 验证结果</h4>
+                <p>结构校验：通过；引用校验：通过；可执行性校验：待执行</p>
+                <div class="meta">evidence_ref: evt_124 / evt_126</div>
               </div>
             </div>
             <hr style="border:none;border-top:1px solid var(--line);margin:12px 0;" />
@@ -204,6 +260,47 @@
                 <div class="meta">产出复盘与记忆写入</div>
               </div>
             </div>
+            <hr style="border:none;border-top:1px solid var(--line);margin:12px 0;" />
+            <div>
+              <strong>Artifacts（按当前 run）</strong>
+              <div class="list" style="margin-top:8px;">
+                <div class="row">
+                  <div class="row-title">tasks/tsk_20260305_x1/runs/run_20260305_01/plan.md</div>
+                  <div class="meta">type: markdown · hash: sha256:a1... · evidence_ref: seq 119</div>
+                </div>
+                <div class="row">
+                  <div class="row-title">tasks/tsk_20260305_x1/runs/run_20260305_01/patch.diff</div>
+                  <div class="meta">type: patch · hash: sha256:b2... · evidence_ref: seq 123</div>
+                </div>
+                <div class="row">
+                  <div class="row-title">tasks/tsk_20260305_x1/runs/run_20260305_01/manifest.json</div>
+                  <div class="meta">type: manifest · hash: sha256:c9... · evidence_ref: seq 127</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="skills">
+          <div class="section-head">Skills 治理视图</div>
+          <div class="section-body">
+            <div class="list">
+              <div class="row">
+                <div class="row-title">evomap-search <span class="pill live">enabled</span></div>
+                <div class="meta">default_enabled: true · blast_radius: low · last_verified: 2026-03-05</div>
+                <div class="meta">路由候选：evomap-search / web-search-fallback · 最终：evomap-search</div>
+              </div>
+              <div class="row">
+                <div class="row-title">obsidian-capture <span class="pill">enabled</span></div>
+                <div class="meta">default_enabled: true · blast_radius: medium · last_used: run_20260304_01</div>
+                <div class="meta">本次 run 临时开关：<button class="btn" style="padding:4px 8px;font-size:12px;">禁用</button></div>
+              </div>
+              <div class="row">
+                <div class="row-title">agent-reach <span class="pill warn">optional</span></div>
+                <div class="meta">default_enabled: false · blast_radius: external_side_effect</div>
+                <div class="meta">路由候选解释：仅当 EvoMap 命中不足时作为回退</div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -216,6 +313,11 @@
               <div>SSE 回放</div><div><span class="tag ok">after=seq</span></div>
               <div>任务真源</div><div>tasks/ + task_events</div>
               <div>Skill Registry</div><div>skills-core/skill-registry.yaml</div>
+              <div>SQLite 占用</div><div>42.6 MB</div>
+              <div>tasks 目录占用</div><div>186.2 MB</div>
+              <div>当前 SSE 连接数</div><div>3</div>
+              <div>最近 10 分钟错误率</div><div>0.8%</div>
+              <div>队列长度</div><div>2</div>
             </div>
           </div>
         </section>
@@ -228,18 +330,24 @@
                 <h4>working_memory</h4>
                 <p>session: sess_x12</p>
                 <div class="meta">expires_at: 2026-03-06</div>
+                <div class="toolbar" style="margin-top:8px;">
+                  <button class="btn" id="wmExtendBtn" style="padding:4px 8px;font-size:12px;">延长 TTL</button>
+                  <button class="btn" id="wmPurgeBtn" style="padding:4px 8px;font-size:12px;">立即清理</button>
+                </div>
               </div>
               <div class="card memory">
                 <h4>fact_memory</h4>
                 <p>namespace: project</p>
-                <div class="meta">evidence_ref: evt_102</div>
+                <div class="meta">evidence_ref: <button class="link-btn" data-jump-evt="102">evt_102</button></div>
               </div>
               <div class="card memory">
                 <h4>decision_log</h4>
                 <p>chat/send 统一入 run</p>
-                <div class="meta">evidence_ref: evt_118</div>
+                <div class="meta">evidence_ref: <button class="link-btn" data-jump-evt="118">evt_118</button></div>
               </div>
             </div>
+            <hr style="border:none;border-top:1px solid var(--line);margin:12px 0;" />
+            <div class="meta">本次 run 记忆写入：working=2、fact=1、decision=1（run_20260305_01）</div>
           </div>
         </section>
       </main>
@@ -250,6 +358,7 @@
           <div class="event"><div class="type">model_routed</div><small>seq 121 · codex · 14:33:01</small><div>route_reason: 当前阶段为 EXECUTE，需本地脚本操作。</div></div>
           <div class="event"><div class="type">verification</div><small>seq 124 · 14:33:38</small><div>通过：基础结构检查通过，待回归。</div></div>
           <div class="event"><div class="type">memory_write</div><small>seq 127 · 14:34:02</small><div>working/task 写入成功，evidence_ref: evt_125</div></div>
+          <div class="event"><div class="type">stream_health</div><small>seq 128 · 14:34:08</small><div>dedup_count: 1 · dropped_out_of_order: 0 · replay_from_seq: 119 · live_seq: 128</div></div>
         </div>
       </aside>
     </div>
@@ -268,10 +377,21 @@
     const inputEl = document.getElementById('composerInput');
     const sendBtn = document.getElementById('sendBtn');
     const newSessionBtn = document.getElementById('newSessionBtn');
-    const toTaskBtn = document.getElementById('toTaskBtn');
+    const dispatchModeEl = document.getElementById('dispatchMode');
+    const runSelect = document.getElementById('runSelect');
+    const connPill = document.getElementById('connPill');
+    const replayFromSeqBtn = document.getElementById('replayFromSeqBtn');
+    const jumpLatestBtn = document.getElementById('jumpLatestBtn');
+    const cancelRunBtn = document.getElementById('cancelRunBtn');
+    const retryRunBtn = document.getElementById('retryRunBtn');
+    const resumeRunBtn = document.getElementById('resumeRunBtn');
+    const exportRunBtn = document.getElementById('exportRunBtn');
+    const copyDebugBtn = document.getElementById('copyDebugBtn');
+    const wmExtendBtn = document.getElementById('wmExtendBtn');
+    const wmPurgeBtn = document.getElementById('wmPurgeBtn');
     const STORAGE_KEY = 'mycc_demo_histories_v2';
 
-    const state = { sessions: [], activeSessionId: null, search: '' };
+    const state = { sessions: [], activeSessionId: null, search: '', activeTaskId: 'tsk_20260305_x1', activeRunId: 'run_20260305_01', lastSeq: 128 };
 
     function nowText() {
       const d = new Date();
@@ -293,9 +413,9 @@
           title: '备份恢复系统优化',
           updatedAt: new Date().toISOString(),
           messages: [
-            { role: 'user', text: '备份恢复系统 v30273：先查 EvoMap，再给我最小可落地方案。', time: nowText() },
-            { role: 'assistant', text: '已完成 EvoMap 预检，命中 3 条经验。建议：先做增量快照 + 校验恢复演练。', time: nowText() },
-            { role: 'assistant', text: '已创建任务：tsk_20260305_x1，正在进入 EXECUTE 阶段。', time: nowText() }
+            { role: 'user', text: '备份恢复系统 v30273：先查 EvoMap，再给我最小可落地方案。', time: nowText(), taskId: 'tsk_20260305_x1', runId: 'run_20260305_01' },
+            { role: 'assistant', text: '已完成 EvoMap 预检，命中 3 条经验。建议：先做增量快照 + 校验恢复演练。', time: nowText(), taskId: 'tsk_20260305_x1', runId: 'run_20260305_01' },
+            { type: 'task_card', time: nowText(), taskId: 'tsk_20260305_x1', runId: 'run_20260305_01', status: 'running', stage: 'EXECUTE', progress: 40, summary: 'Task started: 备份恢复系统优化' }
           ]
         },
         {
@@ -303,8 +423,8 @@
           title: '技能路由复盘',
           updatedAt: new Date(Date.now() - 3600 * 1000).toISOString(),
           messages: [
-            { role: 'user', text: '为什么这个任务走了 codex？', time: nowText() },
-            { role: 'assistant', text: '当前阶段为 EXECUTE 且需要脚本执行，所以走 codex。', time: nowText() }
+            { role: 'user', text: '为什么这个任务走了 codex？', time: nowText(), taskId: 'tsk_20260304_x2', runId: 'run_20260304_02' },
+            { role: 'assistant', text: '当前阶段为 EXECUTE 且需要脚本执行，所以走 codex。', time: nowText(), taskId: 'tsk_20260304_x2', runId: 'run_20260304_02' }
           ]
         }
       ];
@@ -344,7 +464,10 @@
     function filteredSessions() {
       const q = state.search.trim().toLowerCase();
       if (!q) return state.sessions;
-      return state.sessions.filter(s => s.title.toLowerCase().includes(q) || s.messages.some(m => m.text.toLowerCase().includes(q)));
+      return state.sessions.filter(s => s.title.toLowerCase().includes(q) || s.messages.some(m => {
+        const content = (m.text || m.summary || '').toLowerCase();
+        return content.includes(q);
+      }));
     }
 
     function renderHistoryList() {
@@ -355,7 +478,8 @@
         return;
       }
       list.forEach(session => {
-        const preview = session.messages[session.messages.length - 1]?.text || '空会话';
+        const last = session.messages[session.messages.length - 1];
+        const preview = last?.text || last?.summary || '空会话';
         const item = document.createElement('div');
         item.className = `history-item ${session.id === state.activeSessionId ? 'active' : ''}`;
         item.dataset.sessionId = session.id;
@@ -387,9 +511,28 @@
         return;
       }
       session.messages.forEach(m => {
+        if (m.type === 'task_card') {
+          const card = document.createElement('div');
+          card.className = 'task-card-msg';
+          card.innerHTML = `
+            <div class="task-card-head">
+              <span>${escapeHtml(m.summary || 'Task started')}</span>
+              <span class="tag warn">${escapeHtml(m.status || 'running')}</span>
+            </div>
+            <div class="task-card-meta">
+              <div>task: ${escapeHtml(m.taskId || '')} · run: ${escapeHtml(m.runId || '')}</div>
+              <div>stage: ${escapeHtml(m.stage || '-')} · progress: ${Number.isFinite(m.progress) ? m.progress : 0}%</div>
+            </div>
+            <div class="task-card-actions">
+              <button class="btn" data-open-task="${escapeHtml(m.taskId || '')}" style="padding:4px 8px;font-size:12px;">Open Task</button>
+            </div>`;
+          chatLogEl.appendChild(card);
+          return;
+        }
         const el = document.createElement('div');
         el.className = `msg ${m.role === 'user' ? 'user' : ''}`;
-        el.innerHTML = `<div>${escapeHtml(m.text)}</div><div class="msg-time">${m.time || ''}</div>`;
+        const bindMeta = m.taskId ? ` · task:${m.taskId}${m.runId ? ` · run:${m.runId}` : ''}` : ' · 未绑定任务';
+        el.innerHTML = `<div>${escapeHtml(m.text)}</div><div class="msg-time">${m.time || ''}${escapeHtml(bindMeta)}</div>`;
         chatLogEl.appendChild(el);
       });
       chatLogEl.scrollTop = chatLogEl.scrollHeight;
@@ -397,18 +540,71 @@
 
     function renderAll() { renderHistoryList(); renderChat(); }
 
-    function pushMessage(role, text) {
+    function pushMessage(role, text, opts = {}) {
       ensureActiveSession();
       const session = activeSession();
-      session.messages.push({ role, text, time: nowText() });
+      session.messages.push({
+        role,
+        text,
+        time: nowText(),
+        taskId: opts.taskId ?? null,
+        runId: opts.runId ?? null
+      });
       if (session.title === '新会话' && role === 'user') session.title = text.slice(0, 14) || '新会话';
       session.updatedAt = new Date().toISOString();
       saveState();
       renderAll();
     }
 
-    function mockAssistantReply(text) {
-      return `已记录你的需求：“${text.slice(0, 20)}${text.length > 20 ? '...' : ''}”。我会先做 EvoMap 预检，再进入任务执行。`;
+    function mockAssistantReply(text, taskCreated) {
+      if (taskCreated) {
+        return `已记录你的需求：“${text.slice(0, 20)}${text.length > 20 ? '...' : ''}”。已触发任务执行，请在任务页查看进度。`;
+      }
+      return `已记录你的需求：“${text.slice(0, 20)}${text.length > 20 ? '...' : ''}”。当前按聊天模式处理，不创建新任务。`;
+    }
+
+    function shouldCreateTask(text, mode) {
+      if (mode === 'force_task') return true;
+      if (mode === 'chat_only') return false;
+      const hits = ['方案', '实现', '落盘', '修复', '优化', '开发', '设计', '任务', '计划', '重构'];
+      return hits.some(k => text.includes(k));
+    }
+
+    function createTaskCard(summaryText) {
+      const taskId = `tsk_${Date.now().toString().slice(-8)}`;
+      const runId = `run_${Date.now().toString().slice(-8)}`;
+      state.activeTaskId = taskId;
+      state.activeRunId = runId;
+      const session = activeSession();
+      session.messages.push({
+        type: 'task_card',
+        time: nowText(),
+        taskId,
+        runId,
+        status: 'running',
+        stage: 'PLAN',
+        progress: 10,
+        summary: summaryText || 'Task started'
+      });
+      session.updatedAt = new Date().toISOString();
+      saveState();
+      renderAll();
+    }
+
+    function setConnectionStatus(mode) {
+      connPill.className = 'pill';
+      if (mode === 'replaying') {
+        connPill.classList.add('warn');
+        connPill.textContent = `Replaying from seq ${Math.max(1, state.lastSeq - 6)}...`;
+        return;
+      }
+      if (mode === 'reconnecting') {
+        connPill.classList.add('warn');
+        connPill.textContent = 'Reconnecting...';
+        return;
+      }
+      connPill.classList.add('live');
+      connPill.textContent = `Connected · Live · seq ${state.lastSeq}`;
     }
 
     nav.addEventListener('click', (e) => {
@@ -422,9 +618,14 @@
     sendBtn.addEventListener('click', () => {
       const text = inputEl.value.trim();
       if (!text) return;
+      const mode = dispatchModeEl.value;
       pushMessage('user', text);
       inputEl.value = '';
-      setTimeout(() => pushMessage('assistant', mockAssistantReply(text)), 180);
+      const taskCreated = shouldCreateTask(text, mode);
+      if (taskCreated) {
+        createTaskCard(`Task started: ${text.slice(0, 16)}${text.length > 16 ? '...' : ''}`);
+      }
+      setTimeout(() => pushMessage('assistant', mockAssistantReply(text, taskCreated)), 180);
     });
 
     inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendBtn.click(); });
@@ -457,6 +658,17 @@
       historySearchEl.value = '';
       saveState();
       renderAll();
+    });
+
+    chatLogEl.addEventListener('click', (e) => {
+      const openTaskBtn = e.target.closest('button[data-open-task]');
+      if (openTaskBtn) {
+        const taskId = openTaskBtn.dataset.openTask;
+        state.activeTaskId = taskId || state.activeTaskId;
+        const taskNav = nav.querySelector('button[data-view="task"]');
+        buttons.forEach(b => b.classList.toggle('active', b === taskNav));
+        views.forEach(v => v.classList.toggle('active', v.id === 'task'));
+      }
     });
 
     historyListEl.addEventListener('click', (e) => {
@@ -492,11 +704,50 @@
       renderAll();
     });
 
-    toTaskBtn.addEventListener('click', () => {
-      pushMessage('assistant', '已将当前对话转为任务 run，并开始记录事件账本。');
+    runSelect.addEventListener('change', () => {
+      state.activeRunId = runSelect.value;
+      setConnectionStatus('reconnecting');
+      setTimeout(() => setConnectionStatus('live'), 280);
+    });
+
+    replayFromSeqBtn.addEventListener('click', () => {
+      const seq = prompt('输入回放起始 seq：', String(Math.max(1, state.lastSeq - 10)));
+      if (!seq) return;
+      setConnectionStatus('replaying');
+      setTimeout(() => {
+        state.lastSeq = Math.max(state.lastSeq, Number(seq) + 8);
+        setConnectionStatus('live');
+        alert(`已从 seq ${seq} 回放并追平到最新。`);
+      }, 420);
+    });
+
+    jumpLatestBtn.addEventListener('click', () => {
+      state.lastSeq += 1;
+      setConnectionStatus('live');
+      alert('已跳转到最新事件流。');
+    });
+
+    cancelRunBtn.addEventListener('click', () => alert(`已发送 cancel：${state.activeTaskId}/${state.activeRunId}`));
+    retryRunBtn.addEventListener('click', () => alert(`已发送 retry：${state.activeTaskId}/${state.activeRunId}`));
+    resumeRunBtn.addEventListener('click', () => alert(`已发送 resume：${state.activeTaskId}/${state.activeRunId}`));
+    exportRunBtn.addEventListener('click', () => alert(`已导出 debug bundle：${state.activeTaskId}/${state.activeRunId}`));
+    copyDebugBtn.addEventListener('click', () => {
+      const info = `task_id=${state.activeTaskId};run_id=${state.activeRunId};last_seq=${state.lastSeq};request_id=req_demo_20260305`;
+      navigator.clipboard?.writeText(info);
+      alert('已复制诊断信息。');
+    });
+
+    wmExtendBtn.addEventListener('click', () => alert('working_memory TTL 已延长 24 小时。'));
+    wmPurgeBtn.addEventListener('click', () => alert('working_memory 已清理。'));
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-jump-evt]');
+      if (!btn) return;
+      alert(`已跳转到证据事件 seq ${btn.dataset.jumpEvt}（示例占位）。`);
     });
 
     loadState();
+    setConnectionStatus('live');
     renderAll();
   </script>
 </body>

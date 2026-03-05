@@ -24,7 +24,20 @@
 - `Idempotency-Key: <uuid>`（可选）
 
 语义：
-- v1.2 统一为“总是创建或复用 task run”，纯聊天也进入 run 账本。
+- v1.2 统一为“默认纯聊天，按需任务化”。
+- 新增请求字段 `dispatch_mode`：
+  - `auto`（默认）：仅命中任务化条件时创建 task/run
+  - `force_task`：强制创建 task/run
+  - `chat_only`：仅聊天，不创建 task/run
+
+响应补充：
+- 当未任务化时：返回 `task_created=false`，不返回 `task_id/run_id`。
+- 当任务化时：返回 `task_created=true`，并返回 `task_id/run_id` 及摘要字段（`status/stage/progress`）。
+
+任务化条件（后端判定）：
+1. 明确执行指令（执行、落盘、产出文件、验证、修复）。
+2. 预计为异步长任务（超阈值）。
+3. 需要工具与副作用操作（文件写入、脚本执行、联网调用）。
 
 ## 2.3 GET `/tasks/:taskId/events`
 
