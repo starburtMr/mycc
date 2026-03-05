@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyCC 前端 Demo</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --chip: #eef6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 0% 0%, #e6f3ff, var(--bg) 45%);
+    }
+    .app { min-height: 100vh; display: grid; grid-template-rows: 56px 1fr; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.92);
+    }
+    .top-left { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(130deg, #0ea5e9, #2563eb); }
+    .title { font-weight: 700; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip { font-size: 12px; padding: 4px 8px; border-radius: 999px; background: var(--chip); color: #0369a1; }
+
+    .layout { display: grid; grid-template-columns: 280px 1fr 320px; gap: 12px; padding: 12px; min-height: 0; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; min-height: 0; }
+
+    .sidebar { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .nav { display: grid; gap: 8px; }
+    .nav button { text-align: left; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+    .nav button.active { border-color: #7dd3fc; background: #f0f9ff; }
+
+    .history-list { margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 10px; }
+    .history-tools { display: grid; grid-template-columns: 1fr auto auto auto; gap: 6px; margin: 8px 0 10px; }
+    .history-tools input { width: 100%; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); font-size: 12px; }
+    .history-item { padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: #fff; margin-bottom: 8px; cursor: pointer; }
+    .history-item.active { border-color: #7dd3fc; background: #f0f9ff; }
+    .history-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .history-item small { color: var(--muted); display: block; margin-top: 3px; }
+
+    .task-list { margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 10px; }
+    .task { padding: 8px; border-radius: 8px; background: #f8fbff; border: 1px solid #e3eefb; margin-bottom: 8px; }
+    .task small { color: var(--muted); }
+
+    .main { display: flex; flex-direction: column; min-height: 0; }
+    .view { display: none; height: 100%; }
+    .view.active { display: flex; flex-direction: column; }
+    .section-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 700; }
+    .section-body { padding: 14px; overflow: auto; min-height: 0; }
+
+    .chat-log { display: grid; gap: 10px; }
+    .msg { max-width: 82%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
+    .msg.user { margin-left: auto; background: #eefbff; border-color: #bfecff; }
+    .msg-time { margin-top: 5px; font-size: 11px; color: var(--muted); }
+
+    .composer { border-top: 1px solid var(--line); padding: 12px; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; }
+    .composer input { width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); }
+
+    .btn { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+    .btn.primary { background: linear-gradient(135deg, #0ea5e9, #3b82f6); color: #fff; border: none; }
+    .icon-btn { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
+    .icon-btn.danger { border-color: #fecaca; color: #991b1b; background: #fff7f7; }
+
+    .timeline { display: grid; gap: 10px; }
+    .step { border-left: 3px solid #bae6fd; padding: 8px 10px; background: #f8fcff; }
+    .step .meta { color: var(--muted); font-size: 12px; }
+    .kv { display: grid; grid-template-columns: 120px 1fr; gap: 8px 12px; }
+    .kv div:nth-child(odd) { color: var(--muted); }
+    .card-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+    }
+    .card h4 { margin: 0 0 6px; font-size: 14px; }
+    .card p { margin: 0; font-size: 13px; line-height: 1.5; }
+    .card .meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .card.status { border-color: #bfdbfe; background: #f8fbff; }
+    .card.memory { border-color: #c7f0ff; background: #f7fdff; }
+
+    .drawer { display: flex; flex-direction: column; }
+    .drawer .section-body { display: grid; gap: 10px; }
+    .event { border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+    .event .type { font-weight: 700; font-size: 12px; color: #0369a1; }
+    .event small { color: var(--muted); }
+
+    .tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+    .tag.ok { background: #dcfce7; color: #166534; }
+    .tag.warn { background: #fef3c7; color: #92400e; }
+    .empty { color: var(--muted); font-size: 13px; text-align: center; padding: 16px; border: 1px dashed var(--line); border-radius: 10px; }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .drawer { order: 3; }
+      .sidebar { order: 1; }
+      .main { order: 2; }
+      .history-tools { grid-template-columns: 1fr auto auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="top-left"><div class="logo"></div><div class="title">MyCC 协同控制台（Demo）</div></div>
+      <div class="chips"><span class="chip">mode: local</span><span class="chip">claude: ready</span><span class="chip">codex: ready</span></div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel sidebar">
+        <div><strong>页面导航</strong></div>
+        <div class="nav" id="nav">
+          <button class="active" data-view="workbench">聊天工作台</button>
+          <button data-view="task">任务详情</button>
+          <button data-view="system">系统状态</button>
+          <button data-view="memory">记忆视图</button>
+        </div>
+
+        <div class="history-list">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <strong>聊天历史</strong>
+            <button class="btn" id="newSessionBtn" style="padding:4px 8px;font-size:12px;">新会话</button>
+          </div>
+          <div class="history-tools">
+            <input id="historySearch" placeholder="搜索历史会话..." />
+            <button class="btn" id="clearHistoryBtn" style="padding:6px 8px;font-size:12px;">清空</button>
+            <button class="btn" id="resetSeedBtn" style="padding:6px 8px;font-size:12px;">重置</button>
+            <span></span>
+          </div>
+          <div id="historyList"></div>
+        </div>
+
+        <div class="task-list">
+          <div><strong>最近任务</strong></div>
+          <div class="task"><div>备份恢复优化</div><small>run_20260305_01 · running</small></div>
+          <div class="task"><div>技能路由复盘</div><small>run_20260304_09 · completed</small></div>
+          <div class="task"><div>前端契约联调</div><small>run_20260304_02 · failed</small></div>
+        </div>
+      </aside>
+
+      <main class="panel main">
+        <section class="view active" id="workbench">
+          <div class="section-head">统一聊天入口</div>
+          <div class="section-body">
+            <div id="sessionMeta" style="color:var(--muted);font-size:12px;margin-bottom:10px;"></div>
+            <div class="chat-log" id="chatLog"></div>
+          </div>
+          <div class="composer">
+            <input id="composerInput" placeholder="在这里输入需求，系统会自动进入 run 账本..." />
+            <button class="btn" id="toTaskBtn">转任务</button>
+            <button class="btn primary" id="sendBtn">发送</button>
+          </div>
+        </section>
+
+        <section class="view" id="task">
+          <div class="section-head">任务详情 · tsk_20260305_x1</div>
+          <div class="section-body">
+            <div class="card-grid" style="margin-bottom:10px;">
+              <div class="card status">
+                <h4>任务状态</h4>
+                <p><span class="tag warn">running</span></p>
+                <div class="meta">当前阶段：EXECUTE</div>
+              </div>
+              <div class="card status">
+                <h4>路由决策</h4>
+                <p>代码执行与本地脚本验证需求高，优先 codex_adapter。</p>
+                <div class="meta">route_reason 已记录</div>
+              </div>
+              <div class="card status">
+                <h4>事件游标</h4>
+                <p>最后事件 seq：128</p>
+                <div class="meta">支持 after=128 回放</div>
+              </div>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--line);margin:12px 0;" />
+            <div class="card-grid">
+              <div class="card">
+                <h4>PLAN</h4>
+                <p>已完成</p>
+                <div class="meta">14:32:10</div>
+              </div>
+              <div class="card">
+                <h4>EXECUTE</h4>
+                <p>进行中</p>
+                <div class="meta">14:33:02</div>
+              </div>
+              <div class="card">
+                <h4>EVAL</h4>
+                <p>待开始</p>
+                <div class="meta">等待执行阶段完成</div>
+              </div>
+              <div class="card">
+                <h4>REFLECT</h4>
+                <p>待开始</p>
+                <div class="meta">产出复盘与记忆写入</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="system">
+          <div class="section-head">系统状态</div>
+          <div class="section-body">
+            <div class="kv">
+              <div>connectivity_mode</div><div>local（默认）</div>
+              <div>EvoMap 预检</div><div><span class="tag ok">enabled</span></div>
+              <div>SSE 回放</div><div><span class="tag ok">after=seq</span></div>
+              <div>任务真源</div><div>tasks/ + task_events</div>
+              <div>Skill Registry</div><div>skills-core/skill-registry.yaml</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="memory">
+          <div class="section-head">记忆视图（文件 + SQLite）</div>
+          <div class="section-body">
+            <div class="card-grid">
+              <div class="card memory">
+                <h4>working_memory</h4>
+                <p>session: sess_x12</p>
+                <div class="meta">expires_at: 2026-03-06</div>
+              </div>
+              <div class="card memory">
+                <h4>fact_memory</h4>
+                <p>namespace: project</p>
+                <div class="meta">evidence_ref: evt_102</div>
+              </div>
+              <div class="card memory">
+                <h4>decision_log</h4>
+                <p>chat/send 统一入 run</p>
+                <div class="meta">evidence_ref: evt_118</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="panel drawer">
+        <div class="section-head">调试抽屉（审计事件）</div>
+        <div class="section-body">
+          <div class="event"><div class="type">model_routed</div><small>seq 121 · codex · 14:33:01</small><div>route_reason: 当前阶段为 EXECUTE，需本地脚本操作。</div></div>
+          <div class="event"><div class="type">verification</div><small>seq 124 · 14:33:38</small><div>通过：基础结构检查通过，待回归。</div></div>
+          <div class="event"><div class="type">memory_write</div><small>seq 127 · 14:34:02</small><div>working/task 写入成功，evidence_ref: evt_125</div></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const nav = document.getElementById('nav');
+    const buttons = nav.querySelectorAll('button');
+    const views = document.querySelectorAll('.view');
+    const historyListEl = document.getElementById('historyList');
+    const historySearchEl = document.getElementById('historySearch');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const resetSeedBtn = document.getElementById('resetSeedBtn');
+    const chatLogEl = document.getElementById('chatLog');
+    const sessionMetaEl = document.getElementById('sessionMeta');
+    const inputEl = document.getElementById('composerInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const newSessionBtn = document.getElementById('newSessionBtn');
+    const toTaskBtn = document.getElementById('toTaskBtn');
+    const STORAGE_KEY = 'mycc_demo_histories_v2';
+
+    const state = { sessions: [], activeSessionId: null, search: '' };
+
+    function nowText() {
+      const d = new Date();
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function createSession() {
+      return { id: `sess_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, title: '新会话', updatedAt: new Date().toISOString(), messages: [] };
+    }
+
+    function createSeedSessions() {
+      return [
+        {
+          id: `sess_${Date.now()}_a1`,
+          title: '备份恢复系统优化',
+          updatedAt: new Date().toISOString(),
+          messages: [
+            { role: 'user', text: '备份恢复系统 v30273：先查 EvoMap，再给我最小可落地方案。', time: nowText() },
+            { role: 'assistant', text: '已完成 EvoMap 预检，命中 3 条经验。建议：先做增量快照 + 校验恢复演练。', time: nowText() },
+            { role: 'assistant', text: '已创建任务：tsk_20260305_x1，正在进入 EXECUTE 阶段。', time: nowText() }
+          ]
+        },
+        {
+          id: `sess_${Date.now()}_a2`,
+          title: '技能路由复盘',
+          updatedAt: new Date(Date.now() - 3600 * 1000).toISOString(),
+          messages: [
+            { role: 'user', text: '为什么这个任务走了 codex？', time: nowText() },
+            { role: 'assistant', text: '当前阶段为 EXECUTE 且需要脚本执行，所以走 codex。', time: nowText() }
+          ]
+        }
+      ];
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ sessions: state.sessions, activeSessionId: state.activeSessionId }));
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        state.sessions = createSeedSessions();
+        state.activeSessionId = state.sessions[0].id;
+        saveState();
+        return;
+      }
+      try {
+        const data = JSON.parse(raw);
+        state.sessions = Array.isArray(data.sessions) ? data.sessions : createSeedSessions();
+        state.activeSessionId = data.activeSessionId || state.sessions[0]?.id || null;
+      } catch {
+        state.sessions = createSeedSessions();
+        state.activeSessionId = state.sessions[0].id;
+      }
+    }
+
+    function activeSession() { return state.sessions.find(s => s.id === state.activeSessionId) || null; }
+
+    function ensureActiveSession() {
+      if (activeSession()) return;
+      if (state.sessions.length === 0) state.sessions.unshift(createSession());
+      state.activeSessionId = state.sessions[0].id;
+      saveState();
+    }
+
+    function filteredSessions() {
+      const q = state.search.trim().toLowerCase();
+      if (!q) return state.sessions;
+      return state.sessions.filter(s => s.title.toLowerCase().includes(q) || s.messages.some(m => m.text.toLowerCase().includes(q)));
+    }
+
+    function renderHistoryList() {
+      const list = filteredSessions().slice().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      historyListEl.innerHTML = '';
+      if (list.length === 0) {
+        historyListEl.innerHTML = '<div class="empty">没有匹配的会话</div>';
+        return;
+      }
+      list.forEach(session => {
+        const preview = session.messages[session.messages.length - 1]?.text || '空会话';
+        const item = document.createElement('div');
+        item.className = `history-item ${session.id === state.activeSessionId ? 'active' : ''}`;
+        item.dataset.sessionId = session.id;
+        item.innerHTML = `
+          <div class="history-title">
+            <div>${escapeHtml(session.title)}</div>
+            <div>
+              <button class="icon-btn" data-action="rename" data-session-id="${session.id}">改名</button>
+              <button class="icon-btn danger" data-action="delete" data-session-id="${session.id}">删</button>
+            </div>
+          </div>
+          <small>${new Date(session.updatedAt).toLocaleString()}</small>
+          <small>${escapeHtml(preview.slice(0, 30))}${preview.length > 30 ? '...' : ''}</small>`;
+        historyListEl.appendChild(item);
+      });
+    }
+
+    function renderChat() {
+      const session = activeSession();
+      chatLogEl.innerHTML = '';
+      if (!session) {
+        sessionMetaEl.textContent = '当前没有会话';
+        chatLogEl.innerHTML = '<div class="empty">点击左侧“新会话”开始对话</div>';
+        return;
+      }
+      sessionMetaEl.textContent = `会话：${session.id} · 共 ${session.messages.length} 条消息`;
+      if (session.messages.length === 0) {
+        chatLogEl.innerHTML = '<div class="empty">会话为空，输入需求开始协作</div>';
+        return;
+      }
+      session.messages.forEach(m => {
+        const el = document.createElement('div');
+        el.className = `msg ${m.role === 'user' ? 'user' : ''}`;
+        el.innerHTML = `<div>${escapeHtml(m.text)}</div><div class="msg-time">${m.time || ''}</div>`;
+        chatLogEl.appendChild(el);
+      });
+      chatLogEl.scrollTop = chatLogEl.scrollHeight;
+    }
+
+    function renderAll() { renderHistoryList(); renderChat(); }
+
+    function pushMessage(role, text) {
+      ensureActiveSession();
+      const session = activeSession();
+      session.messages.push({ role, text, time: nowText() });
+      if (session.title === '新会话' && role === 'user') session.title = text.slice(0, 14) || '新会话';
+      session.updatedAt = new Date().toISOString();
+      saveState();
+      renderAll();
+    }
+
+    function mockAssistantReply(text) {
+      return `已记录你的需求：“${text.slice(0, 20)}${text.length > 20 ? '...' : ''}”。我会先做 EvoMap 预检，再进入任务执行。`;
+    }
+
+    nav.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-view]');
+      if (!btn) return;
+      const target = btn.dataset.view;
+      buttons.forEach(b => b.classList.toggle('active', b === btn));
+      views.forEach(v => v.classList.toggle('active', v.id === target));
+    });
+
+    sendBtn.addEventListener('click', () => {
+      const text = inputEl.value.trim();
+      if (!text) return;
+      pushMessage('user', text);
+      inputEl.value = '';
+      setTimeout(() => pushMessage('assistant', mockAssistantReply(text)), 180);
+    });
+
+    inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendBtn.click(); });
+
+    newSessionBtn.addEventListener('click', () => {
+      const session = createSession();
+      state.sessions.unshift(session);
+      state.activeSessionId = session.id;
+      saveState();
+      renderAll();
+    });
+
+    historySearchEl.addEventListener('input', () => {
+      state.search = historySearchEl.value;
+      renderHistoryList();
+    });
+
+    clearHistoryBtn.addEventListener('click', () => {
+      if (!confirm('确认清空所有聊天历史吗？')) return;
+      state.sessions = [];
+      state.activeSessionId = null;
+      saveState();
+      renderAll();
+    });
+
+    resetSeedBtn.addEventListener('click', () => {
+      state.sessions = createSeedSessions();
+      state.activeSessionId = state.sessions[0].id;
+      state.search = '';
+      historySearchEl.value = '';
+      saveState();
+      renderAll();
+    });
+
+    historyListEl.addEventListener('click', (e) => {
+      const actionBtn = e.target.closest('button[data-action]');
+      if (actionBtn) {
+        const id = actionBtn.dataset.sessionId;
+        const action = actionBtn.dataset.action;
+        const session = state.sessions.find(s => s.id === id);
+        if (!session) return;
+        if (action === 'rename') {
+          const title = prompt('请输入新的会话标题：', session.title);
+          if (title && title.trim()) {
+            session.title = title.trim();
+            session.updatedAt = new Date().toISOString();
+            saveState();
+            renderAll();
+          }
+        }
+        if (action === 'delete') {
+          if (!confirm(`确认删除会话「${session.title}」吗？`)) return;
+          state.sessions = state.sessions.filter(s => s.id !== id);
+          if (state.activeSessionId === id) state.activeSessionId = state.sessions[0]?.id || null;
+          saveState();
+          renderAll();
+        }
+        return;
+      }
+
+      const item = e.target.closest('.history-item[data-session-id]');
+      if (!item) return;
+      state.activeSessionId = item.dataset.sessionId;
+      saveState();
+      renderAll();
+    });
+
+    toTaskBtn.addEventListener('click', () => {
+      pushMessage('assistant', '已将当前对话转为任务 run，并开始记录事件账本。');
+    });
+
+    loadState();
+    renderAll();
+  </script>
+</body>
+</html>
