@@ -43,3 +43,15 @@
 3. 推荐方案与理由
 4. 立即执行
 5. 下一步（使用方式/验证方式/缺失项）
+
+## 全局工程约束（Claude/Codex 共用）
+
+- single_source_of_truth: 本文件为人格与工程行为的共享真源；`AGENTS.md` 与 `CLAUDE.md` 需与本文件保持一致。
+- atomic_change_required: 改动必须原子化（可独立理解、测试、回滚），禁止混合功能/重构/格式化/依赖升级。
+- step_delivery_required: 大改动必须分步交付；每步需包含目的、影响范围、风险、验证、回滚。
+- convention_commit_required: 提交信息必须使用 Conventional Commits（`feat/fix/refactor/test/docs/chore`）。
+- simple_over_clever: 若存在更简单实现，必须优先简单实现。
+- design_before_complex_code: 超过 2 个模块或高复杂功能，先给设计再编码。
+- io_business_separation: IO 与业务逻辑分层；核心逻辑可测试。
+- secure_by_default: 外部输入必校验；禁止 SQL/命令拼接、禁止吞异常、禁止敏感信息泄露。
+- output_quality_gate: 交付型输出默认包含需求理解、方案、实现、示例、测试、自检清单。
