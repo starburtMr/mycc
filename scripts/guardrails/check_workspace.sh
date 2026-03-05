@@ -165,6 +165,9 @@ fi
 if [[ ! -x "$ROOT_DIR/scripts/skills/skill-import-from-env.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/skill-import-from-env.sh"
 fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/register-skill.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/register-skill.sh"
+fi
 
 # 2.8) 自动进化闭环软检查（仅告警，不阻断）
 if [[ ! -x "$ROOT_DIR/scripts/loop/run_closed_loop.sh" ]]; then
@@ -212,6 +215,15 @@ if [[ ! -x "$ROOT_DIR/scripts/integrations/obsidian/capture_note.sh" ]]; then
 fi
 if [[ ! -x "$ROOT_DIR/scripts/integrations/obsidian/push_session.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/obsidian/push_session.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/obsidian/push_git.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/obsidian/push_git.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/obsidian/bootstrap.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/obsidian/bootstrap.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/obsidian/validate_notes.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/obsidian/validate_notes.sh"
 fi
 if [[ ! -f "$ROOT_DIR/scripts/integrations/obsidian/config.env.example" ]]; then
   echo "[告警] 缺少配置模板: $ROOT_DIR/scripts/integrations/obsidian/config.env.example"

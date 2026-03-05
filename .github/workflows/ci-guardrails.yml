@@ -26,13 +26,17 @@ jobs:
           bash -n scripts/guardrails/self_check.sh
           bash -n scripts/guardrails/session_start.sh
           bash -n scripts/guardrails/session_end.sh
+          bash -n scripts/skills/register-skill.sh
           bash -n scripts/loop/evaluate_session.sh
           bash -n scripts/loop/log_tool_call.sh
           bash -n scripts/loop/run_closed_loop.sh
           bash -n scripts/integrations/web_search.sh
           bash -n scripts/integrations/obsidian/diagnose.sh
+          bash -n scripts/integrations/obsidian/bootstrap.sh
           bash -n scripts/integrations/obsidian/capture_note.sh
           bash -n scripts/integrations/obsidian/push_session.sh
+          bash -n scripts/integrations/obsidian/push_git.sh
+          bash -n scripts/integrations/obsidian/validate_notes.sh
           bash -n scripts/integrations/agent_reach/install.sh
           bash -n scripts/integrations/agent_reach/update.sh
           bash -n scripts/integrations/agent_reach/diagnose.sh

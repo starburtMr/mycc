@@ -1,6 +1,30 @@
 version: 1
-updated_at: '2026-03-05T01:55:26Z'
+updated_at: '2026-03-05T03:52:55Z'
 skills:
+- skill_id: obsidian_capture
+  display_name: Obsidian Capture
+  category: productivity
+  source:
+    manager: manual
+    repo: local/mycc
+    version: 1.0.0
+  routing:
+    entry_shared: skills-core/skills/obsidian-capture/SKILL.md
+    entry_codex: ''
+    entry_claude: ''
+    supports_codex: true
+    supports_claude: true
+  quality:
+    owner: cc
+    last_verified_at: '2026-03-05'
+    test_status: unverified
+  governance:
+    requires_auth: false
+    read_only: true
+    danger_level: low
+    health_check_cmd: bash scripts/guardrails/check_skills_consistency.sh
+  notes:
+  - 示范技能：Obsidian 笔记沉淀
 - skill_id: skill_router_meta
   display_name: Skill Router Meta
   category: general

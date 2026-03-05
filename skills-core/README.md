@@ -8,9 +8,12 @@
 ## 关键文件
 
 - `skills-core/skill-registry.yaml`：技能注册总表（唯一真源）。
+- `skills-core/skills/`：共享 skill 包（建议包含 `SKILL.md`）。
+- `skills-core/templates/skill-package/`：skill 与 manifest 模板。
 - `skills-core/import-manifest-template.yaml`：导入清单模板。
 - `skills-core/compat-matrix-template.yaml`：兼容矩阵模板。
 - `scripts/skills/skill-import.sh`：导入脚本（新增或更新注册项）。
+- `scripts/skills/register-skill.sh`：统一注册入口（推荐）。
 - `scripts/guardrails/check_skills_consistency.sh`：一致性校验脚本。
 
 ## 标准流程
@@ -18,6 +21,7 @@
 1. 通过任意 skill 管理器安装技能到本地目录。
 2. 安装后调用统一入口（推荐）：
    - `bash scripts/skills/post-install.sh`（通过环境变量自动导入）
+   - 或 `bash scripts/skills/register-skill.sh ...`（显式参数导入）
 3. 或者手工导入（兜底）：
    - `cp skills-core/import-manifest-template.yaml /tmp/<skill>.yaml`
    - `bash scripts/skills/skill-import.sh /tmp/<skill>.yaml`
@@ -40,6 +44,22 @@ export SKILL_ENTRY_CLAUDE=".claude/skills/my-skill/SKILL.md"
 bash scripts/skills/post-install.sh
 ```
 
+## 显式注册示例（推荐给本系统）
+
+```bash
+bash scripts/skills/register-skill.sh \
+  --skill-id obsidian_capture \
+  --display-name "Obsidian Capture" \
+  --category productivity \
+  --manager manual \
+  --repo local/mycc \
+  --version 1.0.0 \
+  --entry-shared skills-core/skills/obsidian-capture/SKILL.md \
+  --supports-codex true \
+  --supports-claude true \
+  --owner cc
+```
+
 ## 保证机制
 
 - 每个技能必须有 `skill_id`，并写明 `supports_codex`/`supports_claude`。
@@ -47,6 +67,7 @@ bash scripts/skills/post-install.sh
 - 路径不存在、字段非法、重复 ID 会在一致性校验时报错。
 - `check_workspace.sh` 已接入 skills 软检查，会输出告警。
 - `.codex/hooks/skill-post-install.sh` 可作为 Codex 侧标准 wrapper 调用入口。
+- 统一治理规范见：`4-Assets/architecture/skill-governance-v1.md`
 
 ## 失败处理
 

@@ -65,9 +65,16 @@ else
   body+="(无 reflection.md)"
 fi
 
-bash "$ROOT_DIR/scripts/integrations/obsidian/capture_note.sh" \
+session_folder="$(route_folder_for_type retro)/Sessions"
+
+OBSIDIAN_SKIP_AUTO_PUSH=1 bash "$ROOT_DIR/scripts/integrations/obsidian/capture_note.sh" \
   --title "Session $sid" \
-  --folder "${OBSIDIAN_DEFAULT_FOLDER}/Sessions" \
+  --folder "$session_folder" \
+  --type retro \
+  --status done \
+  --tags "cc,session,reflection" \
   --content "$body"
+
+bash "$ROOT_DIR/scripts/integrations/obsidian/push_git.sh" "obsidian: session $sid"
 
 obs_log "已沉淀会话到 Obsidian: $sid"

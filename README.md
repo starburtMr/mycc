@@ -92,12 +92,15 @@
 
 - 注册真源：`skills-core/skill-registry.yaml`
 - 自动入口：`bash scripts/skills/post-install.sh`（推荐）
+- 显式入口：`bash scripts/skills/register-skill.sh ...`
 - 环境变量导入：`bash scripts/skills/skill-import-from-env.sh`
 - 手工导入脚本：`bash scripts/skills/skill-import.sh <manifest.yaml>`
 - 一致性校验：`bash scripts/guardrails/check_skills_consistency.sh`
 - 工作区巡检已内置 skills 软检查（告警不阻断）
 - Codex wrapper：`.codex/hooks/skill-post-install.sh`
 - 详细说明见：`skills-core/README.md`
+- 治理规范见：`4-Assets/architecture/skill-governance-v1.md`
+- 示例 skill：`skills-core/skills/obsidian-capture/SKILL.md`
 
 ## 自动进化闭环（MVP）
 
@@ -149,8 +152,9 @@
 ## Obsidian 绑定（CLI）
 
 - 适配目录：`scripts/integrations/obsidian/`
+- 一键初始化目录：`bash scripts/integrations/obsidian/bootstrap.sh`
 - 诊断：`bash scripts/integrations/obsidian/diagnose.sh`
 - 单条沉淀：`bash scripts/integrations/obsidian/capture_note.sh --title "..." --content "..."`
 - 会话沉淀：`bash scripts/integrations/obsidian/push_session.sh 3-Thinking/sessions/<session_id>`
 - 使用说明：`4-Assets/integrations/obsidian.md`
-
+- 系统调用手册：`4-Assets/integrations/obsidian-system-playbook.md`
