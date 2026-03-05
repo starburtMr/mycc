@@ -83,6 +83,9 @@ for s in skills:
                 "fail_rate_30d": fail_rate,
             })
 
+    # 规则3：低调用 + 高未命中率（通过平台汇总项触发提醒，不自动降级具体技能）
+    # 注：_unmatched_* 由聚合脚本生成，此处仅保留输出语义一致，不写回 registry。
+
 report = {
     "generated_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
     "dry_run": dry_run,

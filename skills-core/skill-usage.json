@@ -1,6 +1,16 @@
 {
   "obsidian_capture": {
-    "calls_30d": 1,
-    "fail_rate_30d": 0.0
+    "calls_30d": 2,
+    "total_attempts_30d": 2,
+    "miss_30d": 0,
+    "fail_rate_30d": 0.0,
+    "miss_rate_30d": 0.0
+  },
+  "_unmatched_codex": {
+    "calls_30d": 0,
+    "total_attempts_30d": 2,
+    "miss_30d": 2,
+    "fail_rate_30d": 0.0,
+    "miss_rate_30d": 1.0
   }
 }

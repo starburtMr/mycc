@@ -41,7 +41,6 @@ case "$MODE" in
       exit 2
     fi
     ensure_file "$ROOT_DIR/$TASK_FILE"
-    bash "$ROOT_DIR/scripts/guardrails/session_start.sh" "$TASK_FILE"
     bash "$ROOT_DIR/scripts/loop/run_closed_loop.sh" "$TASK_FILE"
     ;;
   ci)

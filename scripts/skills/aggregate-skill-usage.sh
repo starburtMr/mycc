@@ -16,6 +16,7 @@ fi
 
 python3 - "$EVENTS_FILE" "$OUT_FILE" <<'PY'
 import json
+import os
 import sys
 from datetime import datetime, UTC, timedelta
 
@@ -23,6 +24,13 @@ events_file, out_file = sys.argv[1:]
 now = datetime.now(UTC)
 cutoff = now - timedelta(days=30)
 agg = {}
+existing = {}
+if os.path.isfile(out_file):
+    try:
+        with open(out_file, "r", encoding="utf-8") as f:
+            existing = json.load(f)
+    except Exception:
+        existing = {}
 
 with open(events_file, "r", encoding="utf-8") as f:
     for line in f:
@@ -41,21 +49,30 @@ with open(events_file, "r", encoding="utf-8") as f:
         if dt < cutoff:
             continue
         sid = e.get("selected_skill")
-        if not sid:
-            # 未命中不计入 skill 单体，但保留总体路由失败统计价值
-            continue
-        row = agg.setdefault(sid, {"calls_30d": 0, "fail_30d": 0})
-        row["calls_30d"] += 1
-        if not e.get("matched", False):
-            row["fail_30d"] += 1
+        if sid:
+            row = agg.setdefault(sid, {"calls_30d": 0, "fail_30d": 0, "total_attempts_30d": 0, "miss_30d": 0})
+            row["calls_30d"] += 1
+            row["total_attempts_30d"] += 1
+            if not e.get("matched", False):
+                row["fail_30d"] += 1
+        else:
+            # 未命中按平台记录整体路由健康度，避免失败率恒为 0
+            p = str(e.get("platform", "unknown"))
+            sid2 = f"_unmatched_{p}"
+            row = agg.setdefault(sid2, {"calls_30d": 0, "fail_30d": 0, "total_attempts_30d": 0, "miss_30d": 0})
+            row["total_attempts_30d"] += 1
+            row["miss_30d"] += 1
 
-out = {}
+out = dict(existing) if isinstance(existing, dict) else {}
 for sid, row in agg.items():
     calls = row["calls_30d"]
     fail = row["fail_30d"]
     out[sid] = {
         "calls_30d": calls,
+        "total_attempts_30d": row["total_attempts_30d"],
+        "miss_30d": row["miss_30d"],
         "fail_rate_30d": round(fail / calls, 4) if calls else 0.0,
+        "miss_rate_30d": round(row["miss_30d"] / row["total_attempts_30d"], 4) if row["total_attempts_30d"] else 0.0,
     }
 
 with open(out_file, "w", encoding="utf-8") as f:
