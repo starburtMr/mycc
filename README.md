@@ -52,10 +52,10 @@
 ## 快速开始
 
 1. 新建或选择任务文件（`tasks/active/*.md`）。
-2. 运行会话开始检查。
-3. 执行任务并持续更新任务字段。
-4. 会话结束前完成交接字段与状态摘要回写。
-5. 定期运行工作区巡检和 SQLite 巡检。
+2. 日常开发（推荐总入口）：`bash scripts/system/run.sh dev tasks/active/<task>.md`
+3. 本地 CI：`bash scripts/system/run.sh ci`
+4. 月度治理：`bash scripts/system/run.sh monthly`
+5. 第三方 skill 导入：`bash scripts/system/run.sh intake <repo_dir> <source_url>`
 
 ## 守护脚本
 
@@ -100,6 +100,7 @@
 - 手工导入脚本：`bash scripts/skills/skill-import.sh <manifest.yaml>`
 - 默认路由解析：`bash scripts/skills/resolve-active-skills.sh <codex|claude>`
 - 默认路由执行器：`bash scripts/skills/route-skill.sh --platform <codex|claude> --query "<意图>"`
+- usage 自动聚合：`bash scripts/skills/aggregate-skill-usage.sh`
 - 自动降级：`bash scripts/skills/auto-downgrade.sh --dry-run`
 - 一致性校验：`bash scripts/guardrails/check_skills_consistency.sh`
 - 目录结构强校验：`bash scripts/guardrails/check_skill_structure.sh`
@@ -108,6 +109,8 @@
 - 详细说明见：`skills-core/README.md`
 - 治理规范见：`4-Assets/architecture/skill-governance-v1.md`
 - 示例 skill：`skills-core/skills/obsidian-capture/SKILL.md`
+- 第三方 skill 隔离导入：`bash scripts/skills/import-repo-skills.sh <repo_dir> <source_url>`
+- ai-team-skills 接入记录：`4-Assets/integrations/ai-team-skills-intake.md`
 
 ## 自动进化闭环（MVP）
 

@@ -1,10 +1,6 @@
 {
   "obsidian_capture": {
-    "calls_30d": 6,
-    "fail_rate_30d": 0.05
-  },
-  "skill_router_meta": {
     "calls_30d": 1,
-    "fail_rate_30d": 0.5
+    "fail_rate_30d": 0.0
   }
 }

@@ -35,6 +35,7 @@ jobs:
           bash -n scripts/skills/resolve-active-skills.sh
           bash -n scripts/skills/route-skill.sh
           bash -n scripts/skills/auto-downgrade.sh
+          bash -n scripts/skills/aggregate-skill-usage.sh
           bash -n scripts/skills/monthly_skill_review.sh
           bash -n scripts/benchmark/run_regression.sh
           bash -n scripts/loop/evaluate_session.sh

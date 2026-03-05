@@ -17,6 +17,15 @@
 4. 立即执行
 5. 下一步（使用/验证/缺失信息）
 
+## 系统入口（强烈建议）
+
+- 优先通过总编排入口执行：`bash scripts/system/run.sh <mode> ...`
+- 常用模式：
+  - `dev tasks/active/<task>.md`
+  - `ci`
+  - `monthly`
+  - `intake <repo_dir> <source_url>`
+
 ## 工程模式（编码任务默认启用）
 
 - 开始前先给 3-7 条实现计划，并说明改动文件与影响范围。

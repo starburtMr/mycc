@@ -1,0 +1,15 @@
+{
+  "month": "2026-03",
+  "generated_at": "2026-03-05T06:08:37Z",
+  "kpi": {
+    "success_rate": 0.0,
+    "avg_turns": 0.0,
+    "token_cost": null,
+    "rollback_count": 0
+  },
+  "raw": {
+    "sessions_total": 0,
+    "sessions_passed": 0,
+    "tool_turns_total": 0
+  }
+}

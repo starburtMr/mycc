@@ -6,12 +6,14 @@ REGISTRY="$ROOT_DIR/skills-core/skill-registry.yaml"
 PLATFORM="codex"
 QUERY=""
 OUT_FILE=""
+NO_RECORD=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --platform) PLATFORM="${2:-}"; shift 2 ;;
     --query) QUERY="${2:-}"; shift 2 ;;
     --out) OUT_FILE="${2:-}"; shift 2 ;;
+    --no-record) NO_RECORD=1; shift ;;
     *)
       echo "未知参数: $1" >&2
       exit 2
@@ -107,3 +109,28 @@ with open(out_file, "w", encoding="utf-8") as f:
     json.dump(result, f, ensure_ascii=False, indent=2)
 print(json.dumps(result, ensure_ascii=False, indent=2))
 PY
+
+if [[ "$NO_RECORD" != "1" ]]; then
+  EVENTS_FILE="$ROOT_DIR/skills-core/usage/skill-route-events.ndjson"
+  mkdir -p "$(dirname "$EVENTS_FILE")"
+  python3 - "$OUT_FILE" "$EVENTS_FILE" <<'PY'
+import json, sys
+from datetime import datetime, UTC
+
+route_out, events_file = sys.argv[1:]
+with open(route_out, "r", encoding="utf-8") as f:
+    d = json.load(f)
+ev = {
+    "timestamp": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+    "platform": d.get("platform"),
+    "query": d.get("query"),
+    "selected_skill": (d.get("selected") or {}).get("skill_id"),
+    "matched": d.get("selected") is not None,
+}
+with open(events_file, "a", encoding="utf-8") as f:
+    f.write(json.dumps(ev, ensure_ascii=False) + "\n")
+PY
+  if [[ -x "$ROOT_DIR/scripts/skills/aggregate-skill-usage.sh" ]]; then
+    bash "$ROOT_DIR/scripts/skills/aggregate-skill-usage.sh" >/dev/null
+  fi
+fi

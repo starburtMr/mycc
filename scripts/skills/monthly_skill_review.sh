@@ -59,6 +59,8 @@ for s in skills:
         suggestion = "优先隔离/降级"
     if calls < 3 and fail_rate > 0.3:
         suggestion = "降级候选（低调用高失败）"
+    if calls == 0 and lifecycle == "verified":
+        suggestion = "降级候选（30天零调用）"
     lines.append(f"| {sid} | {lifecycle} | {default_enabled} | {blast} | {calls} | {fail_rate:.2f} | {suggestion} |")
 
 with open(out_file, "w", encoding="utf-8") as f:

@@ -200,6 +200,12 @@ fi
 if [[ ! -x "$ROOT_DIR/scripts/skills/auto-downgrade.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/auto-downgrade.sh"
 fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/aggregate-skill-usage.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/aggregate-skill-usage.sh"
+fi
+if [[ ! -d "$ROOT_DIR/skills-core/usage" ]]; then
+  echo "[告警] 缺少目录: $ROOT_DIR/skills-core/usage"
+fi
 if [[ ! -x "$ROOT_DIR/scripts/guardrails/check_skill_structure.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/guardrails/check_skill_structure.sh"
 fi
