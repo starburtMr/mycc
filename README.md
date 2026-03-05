@@ -131,3 +131,11 @@
 - 官方安装封装：`bash scripts/integrations/agent_reach/full_install.sh auto`
 - 安全模式：`bash scripts/integrations/agent_reach/full_install.sh auto --safe`
 - 健康检查：`bash scripts/integrations/agent_reach/doctor.sh`
+
+## CI 自动巡检
+
+- 工作流：`.github/workflows/ci-guardrails.yml`
+- 触发：`push(main)` 与 `pull_request`
+- 执行内容：脚本语法检查、`check_workspace`、SQLite 巡检、`self_check`
+- 目标：把会话规范从“人工执行”升级为“合并前自动闸门”
+

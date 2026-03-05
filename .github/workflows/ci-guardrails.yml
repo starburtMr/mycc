@@ -1,0 +1,38 @@
+name: CI Guardrails
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq sqlite3 ripgrep
+
+      - name: Shell syntax checks
+        run: |
+          bash -n scripts/guardrails/check_workspace.sh
+          bash -n scripts/guardrails/self_check.sh
+          bash -n scripts/guardrails/session_start.sh
+          bash -n scripts/guardrails/session_end.sh
+          bash -n scripts/loop/evaluate_session.sh
+          bash -n scripts/loop/run_closed_loop.sh
+          bash -n scripts/integrations/web_search.sh
+          bash -n scripts/integrations/agent_reach/install.sh
+          bash -n scripts/integrations/agent_reach/update.sh
+          bash -n scripts/integrations/agent_reach/diagnose.sh
+
+      - name: Workspace checks
+        run: |
+          bash scripts/guardrails/check_workspace.sh
+          bash memory/scripts/run_memory_checks.sh
+          bash scripts/guardrails/self_check.sh
