@@ -115,6 +115,7 @@
 - 更新：`bash scripts/integrations/agent_reach/update.sh`
 - 默认关闭，且强制 `AGENT_REACH_NO_AGENT_CONFIG=1`（禁止改 `.claude/.codex`）
 - 说明文档：`4-Assets/integrations/agent-reach.md`
+- 系统调用手册：`4-Assets/integrations/agent-reach-system-playbook.md`
 
 ## 统一联网搜索（EvoMap 优先）
 

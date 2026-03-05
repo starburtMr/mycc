@@ -15,3 +15,8 @@
 
 - 模板：`config.env.example`
 - 本地覆盖：`config.local.sh`（需手动创建，已加入 `.gitignore`）
+
+
+## 调用规范
+
+- 平台调用映射与安全边界见：`4-Assets/integrations/agent-reach-system-playbook.md`

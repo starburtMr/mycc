@@ -64,3 +64,9 @@ bash scripts/integrations/agent_reach/full_install.sh auto --safe
 ```bash
 bash scripts/integrations/agent_reach/doctor.sh
 ```
+
+
+## 系统调用手册
+
+- 统一调用规范见：`4-Assets/integrations/agent-reach-system-playbook.md`
+- 建议 Claude/Codex 在执行平台类任务前先读取该手册。
