@@ -137,25 +137,30 @@ PY
   if [[ -z "$cli_path" ]]; then
     AGENT_REACH_ERROR="Agent-Reach 未就绪或未启用"
   else
-    set +e
-    out1="$($cli_path search --query "$QUERY" --json 2>/tmp/agent_reach_search_err.log)"
-    code1=$?
-    set -e
-    if [[ $code1 -eq 0 && -n "$out1" ]]; then
-      AGENT_REACH_OK=true
-      AGENT_REACH_OUTPUT="$out1"
-      AGENT_REACH_CMD="search --query --json"
+    help_text="$($cli_path --help 2>/dev/null || true)"
+    if ! echo "$help_text" | rg -q "(^|\\s)search(\\s|$)"; then
+      AGENT_REACH_ERROR="Agent-Reach CLI 未提供 search 子命令，当前版本仅支持 setup/install/configure/doctor/watch"
     else
       set +e
-      out2="$($cli_path search "$QUERY" --json 2>/tmp/agent_reach_search_err.log)"
-      code2=$?
+      out1="$($cli_path search --query "$QUERY" --json 2>/tmp/agent_reach_search_err.log)"
+      code1=$?
       set -e
-      if [[ $code2 -eq 0 && -n "$out2" ]]; then
+      if [[ $code1 -eq 0 && -n "$out1" ]]; then
         AGENT_REACH_OK=true
-        AGENT_REACH_OUTPUT="$out2"
-        AGENT_REACH_CMD="search <query> --json"
+        AGENT_REACH_OUTPUT="$out1"
+        AGENT_REACH_CMD="search --query --json"
       else
-        AGENT_REACH_ERROR="Agent-Reach 查询失败，可能是 CLI 参数不兼容"
+        set +e
+        out2="$($cli_path search "$QUERY" --json 2>/tmp/agent_reach_search_err.log)"
+        code2=$?
+        set -e
+        if [[ $code2 -eq 0 && -n "$out2" ]]; then
+          AGENT_REACH_OK=true
+          AGENT_REACH_OUTPUT="$out2"
+          AGENT_REACH_CMD="search <query> --json"
+        else
+          AGENT_REACH_ERROR="Agent-Reach 查询失败，可能是 CLI 参数不兼容"
+        fi
       fi
     fi
   fi
