@@ -28,6 +28,12 @@
 - `tasks/`：跨会话任务追踪（唯一真源）
 - `memory/`：结构化长期记忆（SQLite）
 
+## 新增模板层（低风险接入）
+
+- `4-Assets/prompts/`：核心提示词模板（`00-system/plan/implement/review/debug`）
+- `3-Thinking/reflection/`：反思模板（`session-wrap/daily-reflection`）
+- 说明：以上是模板与建议层，不是规则真源。规则真源仍在 `0-System/` 与 `tasks/`。
+
 ## 运行策略（v2）
 
 - `上下文压缩`：当上下文使用达到 60% 时，先做阶段摘要再继续执行。

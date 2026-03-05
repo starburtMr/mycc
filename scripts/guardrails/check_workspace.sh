@@ -137,6 +137,17 @@ for d in "$ROOT_DIR"/2-Projects/*; do
   fi
 done
 
+# 2.5) Prompt/Reflection 软检查（仅告警，不阻断）
+if [[ ! -f "$ROOT_DIR/4-Assets/prompts/00-system.md" ]]; then
+  echo "[告警] 缺少 prompt 模板: $ROOT_DIR/4-Assets/prompts/00-system.md"
+fi
+if [[ ! -f "$ROOT_DIR/3-Thinking/reflection/session-wrap.md" ]]; then
+  echo "[告警] 缺少反思模板: $ROOT_DIR/3-Thinking/reflection/session-wrap.md"
+fi
+if [[ ! -f "$ROOT_DIR/3-Thinking/reflection/daily-reflection.md" ]]; then
+  echo "[告警] 缺少反思模板: $ROOT_DIR/3-Thinking/reflection/daily-reflection.md"
+fi
+
 # 3) SQLite 登记巡检
 db_fail=0
 if ! command -v sqlite3 >/dev/null 2>&1; then
