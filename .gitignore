@@ -28,3 +28,12 @@ scripts/integrations/agent_reach/.state/
 # Obsidian local settings
 scripts/integrations/obsidian/config.local.sh
 scripts/integrations/obsidian/.state/
+
+# Generated runtime artifacts
+benchmarks/last_regression.json
+skills-core/usage/skill-route-events.ndjson
+skills-core/monthly-skill-review-*.md
+skills-core/auto-downgrade-*.json
+3-Thinking/sessions/kpi-*.json
+3-Thinking/sessions/check-session/
+scripts/adapters/__pycache__/
