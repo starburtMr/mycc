@@ -7,6 +7,8 @@
 - `install.sh`: 受限安装（隔离目录 + 禁止改代理配置）
 - `diagnose.sh`: 输出结构化健康报告 JSON
 - `update.sh`: 带备份 tag 的更新与失败回退
+- `full_install.sh`: 官方 `agent-reach install` 封装（全量接入）
+- `doctor.sh`: 官方 `agent-reach doctor` 封装
 - `lib.sh`: 公共配置与函数
 
 ## 配置

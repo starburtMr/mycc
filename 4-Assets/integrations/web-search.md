@@ -3,7 +3,7 @@
 ## 目标
 
 - 在执行任务前优先复用 EvoMap 经验。
-- 当 EvoMap 命中不足时，自动回退 Agent-Reach。
+- 当 EvoMap 命中不足时，自动回退到 Agent-Reach 安装的 `mcporter + Exa`。
 - 输出统一结构化 JSON，进入闭环评估。
 
 ## 用法
@@ -37,3 +37,9 @@ bash scripts/integrations/web_search.sh --query "备份恢复系统 v30273：智
 
 - 仍遵循 EvoMap 只读策略（不注册节点、不心跳、不接任务）。
 - Agent-Reach 必须处于受限模式（禁止改 `.claude/.codex`）。
+
+
+## 回退实现
+
+- 当前回退命令：`mcporter call exa.web_search_exa query="..." numResults=5`
+- 若未配置 Exa，将在结果中标注错误原因。

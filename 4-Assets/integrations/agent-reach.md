@@ -45,3 +45,22 @@ git -C .runtime/agent-reach/repo checkout <tag>
 
 - 禁止脚本自动修改 `.claude/` 与 `.codex/` 配置。
 - 禁止在未启用 `AGENT_REACH_NO_AGENT_CONFIG=1` 时执行安装和更新。
+
+
+## 全量接入（官方 install）
+
+```bash
+bash scripts/integrations/agent_reach/full_install.sh auto
+```
+
+安全模式：
+
+```bash
+bash scripts/integrations/agent_reach/full_install.sh auto --safe
+```
+
+健康检查：
+
+```bash
+bash scripts/integrations/agent_reach/doctor.sh
+```

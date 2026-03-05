@@ -111,56 +111,28 @@ fi
 AGENT_REACH_USED=false
 AGENT_REACH_OK=false
 AGENT_REACH_ERROR=''
-AGENT_REACH_OUTPUT=''
 AGENT_REACH_CMD=''
+AGENT_REACH_OUTPUT_FILE=''
 
 if [[ "$EVOMAP_OK" != "true" ]]; then
   AGENT_REACH_USED=true
-  diag_tmp="$ROOT_DIR/scripts/integrations/agent_reach/.state/diagnose_tmp.json"
-  bash "$ROOT_DIR/scripts/integrations/agent_reach/diagnose.sh" "$diag_tmp" >/dev/null 2>&1 || true
-
-  cli_path="$(python3 - "$diag_tmp" <<'PY'
-import json,sys
-p=sys.argv[1]
-try:
-    d=json.load(open(p,'r',encoding='utf-8'))
-except Exception:
-    print("")
-    raise SystemExit(0)
-if d.get('pass') and d.get('paths',{}).get('cli_bin'):
-    print(d['paths']['cli_bin'])
-else:
-    print("")
-PY
-)"
-
-  if [[ -z "$cli_path" ]]; then
-    AGENT_REACH_ERROR="Agent-Reach 未就绪或未启用"
+  if ! command -v mcporter >/dev/null 2>&1; then
+    AGENT_REACH_ERROR="mcporter 不存在，无法使用 Agent-Reach 的 Exa 搜索能力"
   else
-    help_text="$($cli_path --help 2>/dev/null || true)"
-    if ! echo "$help_text" | rg -q "(^|\\s)search(\\s|$)"; then
-      AGENT_REACH_ERROR="Agent-Reach CLI 未提供 search 子命令，当前版本仅支持 setup/install/configure/doctor/watch"
+    if ! mcporter list exa --schema --json >/tmp/mcporter_exa_schema.json 2>/tmp/mcporter_exa_schema.err; then
+      AGENT_REACH_ERROR="mcporter 未配置 exa 服务器，无法回退搜索"
     else
+      exa_out_file="$ROOT_DIR/scripts/integrations/agent_reach/.state/mcporter_exa_last.txt"
       set +e
-      out1="$($cli_path search --query "$QUERY" --json 2>/tmp/agent_reach_search_err.log)"
+      mcporter call exa.web_search_exa query="$QUERY" numResults=5 >"$exa_out_file" 2>/tmp/mcporter_exa_search.err
       code1=$?
       set -e
-      if [[ $code1 -eq 0 && -n "$out1" ]]; then
+      if [[ $code1 -eq 0 && -s "$exa_out_file" ]]; then
         AGENT_REACH_OK=true
-        AGENT_REACH_OUTPUT="$out1"
-        AGENT_REACH_CMD="search --query --json"
+        AGENT_REACH_OUTPUT_FILE="$exa_out_file"
+        AGENT_REACH_CMD="mcporter call exa.web_search_exa"
       else
-        set +e
-        out2="$($cli_path search "$QUERY" --json 2>/tmp/agent_reach_search_err.log)"
-        code2=$?
-        set -e
-        if [[ $code2 -eq 0 && -n "$out2" ]]; then
-          AGENT_REACH_OK=true
-          AGENT_REACH_OUTPUT="$out2"
-          AGENT_REACH_CMD="search <query> --json"
-        else
-          AGENT_REACH_ERROR="Agent-Reach 查询失败，可能是 CLI 参数不兼容"
-        fi
+        AGENT_REACH_ERROR="mcporter Exa 查询失败"
       fi
     fi
   fi
@@ -169,6 +141,7 @@ fi
 PROVIDER="none"
 PASS=false
 RESULT_PAYLOAD='{}'
+RESULT_PAYLOAD_FILE=''
 if [[ "$EVOMAP_OK" == "true" ]]; then
   PROVIDER="evomap"
   PASS=true
@@ -176,27 +149,37 @@ if [[ "$EVOMAP_OK" == "true" ]]; then
 elif [[ "$AGENT_REACH_OK" == "true" ]]; then
   PROVIDER="agent-reach"
   PASS=true
-  RESULT_PAYLOAD="$AGENT_REACH_OUTPUT"
+  RESULT_PAYLOAD_FILE="$AGENT_REACH_OUTPUT_FILE"
 fi
 
-python3 - "$OUT_FILE" "$QUERY" "$TASK_FILE" "$PROJECT" "$MODE" "$PASS" "$PROVIDER" "$EVOMAP_OK" "$EVOMAP_INTERNAL" "$EVOMAP_WEB" "$EVOMAP_SUMMARY" "$EVOMAP_ERROR" "$AGENT_REACH_USED" "$AGENT_REACH_OK" "$AGENT_REACH_CMD" "$AGENT_REACH_ERROR" "$RESULT_PAYLOAD" <<'PY'
+python3 - "$OUT_FILE" "$QUERY" "$TASK_FILE" "$PROJECT" "$MODE" "$PASS" "$PROVIDER" "$EVOMAP_OK" "$EVOMAP_INTERNAL" "$EVOMAP_WEB" "$EVOMAP_SUMMARY" "$EVOMAP_ERROR" "$AGENT_REACH_USED" "$AGENT_REACH_OK" "$AGENT_REACH_CMD" "$AGENT_REACH_ERROR" "$RESULT_PAYLOAD" "$RESULT_PAYLOAD_FILE" <<'PY'
 import json
 import sys
 from datetime import datetime, UTC
+from pathlib import Path
 
 (
   out_file, query, task_file, project, mode, passed, provider,
   evomap_ok, evomap_internal, evomap_web, evomap_summary, evomap_error,
-  ar_used, ar_ok, ar_cmd, ar_error, result_payload
+  ar_used, ar_ok, ar_cmd, ar_error, result_payload, result_payload_file
 ) = sys.argv[1:]
 
 def b(v):
   return str(v).lower() == 'true'
 
-try:
-  payload = json.loads(result_payload)
-except Exception:
-  payload = {"raw": result_payload}
+payload = {}
+if result_payload_file:
+  raw = ""
+  try:
+    raw = Path(result_payload_file).read_bytes().decode("utf-8", "replace")
+    payload = json.loads(raw)
+  except Exception:
+    payload = {"raw": raw}
+else:
+  try:
+    payload = json.loads(result_payload)
+  except Exception:
+    payload = {"raw": result_payload}
 
 out = {
   "generated_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace('+00:00', 'Z'),

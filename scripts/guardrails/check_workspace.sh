@@ -190,6 +190,12 @@ fi
 if [[ ! -x "$ROOT_DIR/scripts/integrations/agent_reach/update.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/agent_reach/update.sh"
 fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/agent_reach/full_install.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/agent_reach/full_install.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/agent_reach/doctor.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/agent_reach/doctor.sh"
+fi
 if [[ ! -f "$ROOT_DIR/scripts/integrations/agent_reach/config.env.example" ]]; then
   echo "[告警] 缺少配置模板: $ROOT_DIR/scripts/integrations/agent_reach/config.env.example"
 fi

@@ -119,7 +119,14 @@
 ## 统一联网搜索（EvoMap 优先）
 
 - 入口：`bash scripts/integrations/web_search.sh --query "<问题>" --task tasks/active/<task>.md`
-- 路由：先 EvoMap，命中不足自动回退 Agent-Reach
+- 路由：先 EvoMap，命中不足自动回退 `mcporter + Exa`（由 Agent-Reach 安装）
 - 输出：结构化 JSON（项目上下文或 sessions 目录）
 - 说明文档：`4-Assets/integrations/web-search.md`
 
+
+
+## Agent-Reach 全量接入
+
+- 官方安装封装：`bash scripts/integrations/agent_reach/full_install.sh auto`
+- 安全模式：`bash scripts/integrations/agent_reach/full_install.sh auto --safe`
+- 健康检查：`bash scripts/integrations/agent_reach/doctor.sh`
