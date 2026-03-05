@@ -98,3 +98,12 @@
 - 工作区巡检已内置 skills 软检查（告警不阻断）
 - Codex wrapper：`.codex/hooks/skill-post-install.sh`
 - 详细说明见：`skills-core/README.md`
+
+## 自动进化闭环（MVP）
+
+- 闭环入口：`bash scripts/loop/run_closed_loop.sh tasks/active/<task>.md`
+- 结构化评估：`bash scripts/loop/evaluate_session.sh <session_dir> tasks/active/<task>.md`
+- 规则分层：`0-System/policy/staging-rules.md`、`stable-rules.md`、`archive-rules.md`
+- 规则决策日志：`0-System/policy/decision-log.md`
+- 架构说明：`4-Assets/architecture/evolution-loop-mvp.md`
+

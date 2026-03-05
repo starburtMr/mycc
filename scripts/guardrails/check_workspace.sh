@@ -166,6 +166,20 @@ if [[ ! -x "$ROOT_DIR/scripts/skills/skill-import-from-env.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/skill-import-from-env.sh"
 fi
 
+# 2.8) 自动进化闭环软检查（仅告警，不阻断）
+if [[ ! -x "$ROOT_DIR/scripts/loop/run_closed_loop.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/loop/run_closed_loop.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/loop/evaluate_session.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/loop/evaluate_session.sh"
+fi
+if [[ ! -f "$ROOT_DIR/0-System/policy/staging-rules.md" ]]; then
+  echo "[告警] 缺少规则暂存区: $ROOT_DIR/0-System/policy/staging-rules.md"
+fi
+if [[ ! -f "$ROOT_DIR/0-System/policy/stable-rules.md" ]]; then
+  echo "[告警] 缺少稳定规则文件: $ROOT_DIR/0-System/policy/stable-rules.md"
+fi
+
 # 3) SQLite 登记巡检
 db_fail=0
 if ! command -v sqlite3 >/dev/null 2>&1; then
