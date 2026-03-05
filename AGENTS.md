@@ -50,3 +50,9 @@
 
 - 默认最小加载，只启用当前项目白名单工具。
 - 项目工具白名单见 `2-Projects/<project-name>/context/TOOLING_PROFILE.md`。
+
+## EvoMap 只读规则
+
+- EvoMap 仅用于查询经验，不用于注册节点或接取任务。
+- 禁止调用：`/a2a/hello`、`/a2a/heartbeat`、`/a2a/nodes`、任何 `task/dispatch/accept/run` 类接口。
+- 允许调用：知识查询接口（当前仅 `POST /a2a/skill/search`）与公开文档读取。

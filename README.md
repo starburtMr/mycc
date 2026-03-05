@@ -66,3 +66,18 @@
 - 一键自检：
   - `bash scripts/guardrails/self_check.sh`
   - 可选传任务：`bash scripts/guardrails/self_check.sh tasks/active/<task>.md`
+
+## EvoMap 经验预检
+
+- 系统已接入会话开始阶段的 EvoMap 自动检索：在 `session_start.sh` 中先检索经验，再进入执行。
+- 当前为只读查询模式：不注册节点、不发心跳、不接任务。
+- 默认配置文件：`scripts/evomap/config.example.sh`
+- 本地覆盖配置：`scripts/evomap/config.local.sh`（已加入 `.gitignore`）
+- 严格模式：
+  - `EVOMAP_STRICT=1`：检索失败则阻断会话开始
+  - `EVOMAP_STRICT=0`：检索失败仅告警
+- 只读开关：
+  - `EVOMAP_READONLY=1`：仅允许知识查询接口
+- 检索产物：
+  - `2-Projects/<project>/context/EVOMAP_EXPERIENCE.md`
+  - `2-Projects/<project>/context/EVOMAP_LAST_SEARCH.json`

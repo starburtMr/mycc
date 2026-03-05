@@ -78,4 +78,17 @@ fi
 echo "- OK: $project_context"
 echo "- OK: $project_tooling"
 
+# EvoMap 经验预检（先查再做）
+if [[ -f "$ROOT_DIR/scripts/evomap/lib.sh" && -f "$ROOT_DIR/scripts/evomap/preflight_search.sh" ]]; then
+  source "$ROOT_DIR/scripts/evomap/lib.sh"
+  echo "[session_start] EvoMap 经验预检"
+  if ! bash "$ROOT_DIR/scripts/evomap/preflight_search.sh" "$TASK_FILE"; then
+    if [[ "${EVOMAP_STRICT:-0}" == "1" ]]; then
+      echo "EvoMap 预检失败，且处于严格模式，阻断会话开始。" >&2
+      exit 1
+    fi
+    echo "警告: EvoMap 预检失败（非严格模式，继续执行）。"
+  fi
+fi
+
 echo "[session_start] 检查通过"

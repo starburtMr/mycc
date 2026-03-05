@@ -15,3 +15,7 @@ Thumbs.db
 # SQLite runtime artifacts
 memory/backup/*.db
 memory/backup/weekly_latest.db
+
+# EvoMap local state
+scripts/evomap/config.local.sh
+scripts/evomap/.state/
