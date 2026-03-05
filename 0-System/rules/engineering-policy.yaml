@@ -1,0 +1,67 @@
+version: 1
+policy_name: engineering_policy
+description: 机器可读的工程闸门，用于蜂巢并行任务检查
+
+source_of_truth:
+  human_readable: 0-System/rules/ENGINEERING_CONSTITUTION.md
+  persona: 0-System/about-me/persona.md
+
+atomic_change:
+  enabled: true
+  forbid_mixed_change_types: true
+  allowed_change_types:
+    - feat
+    - fix
+    - refactor
+    - test
+    - docs
+    - chore
+
+step_limits:
+  max_files_per_step: 5
+  max_added_lines_per_step: 200
+  require_reason_if_exceeded: true
+
+step_requirements:
+  required_fields:
+    - scope
+    - non_goals
+    - allowed_files
+    - tests
+    - rollback
+    - commit_type
+  each_step_must_be:
+    - runnable
+    - testable
+    - rollbackable
+
+quality_gates:
+  require_input_validation: true
+  forbid_sql_concat: true
+  forbid_command_concat: true
+  forbid_eval: true
+  forbid_swallow_exceptions: true
+  require_structured_logging: true
+  require_io_business_separation: true
+  require_test_plan: true
+
+security:
+  no_secret_in_code: true
+  no_secret_in_logs: true
+  require_config_from_env: true
+
+compatibility:
+  backward_compatible_by_default: true
+  breaking_change_requires:
+    - dedicated_step
+    - migration_plan
+    - rollback_plan
+
+output_contract:
+  required_sections:
+    - requirement_understanding
+    - design
+    - implementation
+    - usage_example
+    - tests
+    - self_checklist

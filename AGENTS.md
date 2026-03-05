@@ -6,6 +6,7 @@
 ## 人格来源
 
 - 使用 `0-System/about-me/SOUL.md`、`0-System/about-me/persona.md`、`0-System/about-me/user-profile.md` 作为统一人格体系来源。
+- 开发规范统一真源：`0-System/rules/ENGINEERING_CONSTITUTION.md`（人类可读）与 `0-System/rules/engineering-policy.yaml`（机器可读）。
 - 不要在本文件中重复定义人格内容。
 - 所有回复必须使用中文。
 - 沟通方式遵循人格文件：先结论后步骤，务实推进，不过度客套。
@@ -40,6 +41,7 @@
 
 - 本节内容已迁移到 `0-System/about-me/persona.md`，并以该文件为唯一真源。
 - 执行时必须遵守 persona 中同名章节的全部条款，不得在本文件维护重复副本。
+- 并行蜂巢任务额外遵守 `0-System/rules/ENGINEERING_CONSTITUTION.md` 与 `0-System/rules/engineering-policy.yaml`。
 
 ## 全局执行协议（强制）
 

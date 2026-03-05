@@ -5,6 +5,7 @@
 ## 人格来源
 
 - 使用 `0-System/about-me/SOUL.md`、`0-System/about-me/persona.md`、`0-System/about-me/user-profile.md` 作为统一人格体系来源。
+- 开发规范统一真源：`0-System/rules/ENGINEERING_CONSTITUTION.md`（人类可读）与 `0-System/rules/engineering-policy.yaml`（机器可读）。
 - 不要在本文件中重复定义人格内容。
 - 所有回复必须使用中文。
 - 沟通方式遵循人格文件：先结论后步骤，务实推进，不过度客套。
@@ -25,6 +26,7 @@
 - 输入校验、边界处理、错误可定位，不吞异常。
 - 关键逻辑优先补测试；至少给出可执行验证步骤与预期结果。
 - 涉及配置/迁移时，必须给回滚方案。
+- 版本控制与原子提交约束以 `0-System/about-me/persona.md` 为真源；并行任务额外遵循 `0-System/rules/ENGINEERING_CONSTITUTION.md` 与 `0-System/rules/engineering-policy.yaml`。
 
 ## 会话与执行约束
 
