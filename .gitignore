@@ -24,3 +24,7 @@ scripts/evomap/.state/
 scripts/integrations/agent_reach/config.local.sh
 scripts/integrations/agent_reach/.state/
 .runtime/
+
+# Obsidian local settings
+scripts/integrations/obsidian/config.local.sh
+scripts/integrations/obsidian/.state/

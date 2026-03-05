@@ -30,6 +30,9 @@ jobs:
           bash -n scripts/loop/log_tool_call.sh
           bash -n scripts/loop/run_closed_loop.sh
           bash -n scripts/integrations/web_search.sh
+          bash -n scripts/integrations/obsidian/diagnose.sh
+          bash -n scripts/integrations/obsidian/capture_note.sh
+          bash -n scripts/integrations/obsidian/push_session.sh
           bash -n scripts/integrations/agent_reach/install.sh
           bash -n scripts/integrations/agent_reach/update.sh
           bash -n scripts/integrations/agent_reach/diagnose.sh

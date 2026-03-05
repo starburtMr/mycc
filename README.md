@@ -146,3 +146,11 @@
   需要：`WRITE_ACTION_APPROVED=1` 与 `WRITE_ACTION_TOKEN=<token>`
 - 闭环证据链：`run_closed_loop.sh` 会生成 `run_manifest.json` 与 `tool_calls.ndjson`
 
+## Obsidian 绑定（CLI）
+
+- 适配目录：`scripts/integrations/obsidian/`
+- 诊断：`bash scripts/integrations/obsidian/diagnose.sh`
+- 单条沉淀：`bash scripts/integrations/obsidian/capture_note.sh --title "..." --content "..."`
+- 会话沉淀：`bash scripts/integrations/obsidian/push_session.sh 3-Thinking/sessions/<session_id>`
+- 使用说明：`4-Assets/integrations/obsidian.md`
+

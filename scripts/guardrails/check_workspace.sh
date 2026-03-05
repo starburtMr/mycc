@@ -203,6 +203,20 @@ if [[ ! -x "$ROOT_DIR/scripts/integrations/web_search.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/web_search.sh"
 fi
 
+# 2.11) Obsidian 绑定软检查（仅告警，不阻断）
+if [[ ! -x "$ROOT_DIR/scripts/integrations/obsidian/diagnose.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/obsidian/diagnose.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/obsidian/capture_note.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/obsidian/capture_note.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/obsidian/push_session.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/obsidian/push_session.sh"
+fi
+if [[ ! -f "$ROOT_DIR/scripts/integrations/obsidian/config.env.example" ]]; then
+  echo "[告警] 缺少配置模板: $ROOT_DIR/scripts/integrations/obsidian/config.env.example"
+fi
+
 # 2.10) 能力契约软检查（仅告警，不阻断）
 if [[ -x "$ROOT_DIR/scripts/guardrails/check_capability_contracts.sh" ]]; then
   if ! bash "$ROOT_DIR/scripts/guardrails/check_capability_contracts.sh" >/tmp/mycc_capability_check.log 2>&1; then
