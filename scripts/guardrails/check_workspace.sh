@@ -180,6 +180,23 @@ if [[ ! -f "$ROOT_DIR/0-System/policy/stable-rules.md" ]]; then
   echo "[告警] 缺少稳定规则文件: $ROOT_DIR/0-System/policy/stable-rules.md"
 fi
 
+# 2.9) Agent-Reach 受限适配层软检查（仅告警，不阻断）
+if [[ ! -x "$ROOT_DIR/scripts/integrations/agent_reach/install.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/agent_reach/install.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/agent_reach/diagnose.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/agent_reach/diagnose.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/agent_reach/update.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/agent_reach/update.sh"
+fi
+if [[ ! -f "$ROOT_DIR/scripts/integrations/agent_reach/config.env.example" ]]; then
+  echo "[告警] 缺少配置模板: $ROOT_DIR/scripts/integrations/agent_reach/config.env.example"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/integrations/web_search.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/integrations/web_search.sh"
+fi
+
 # 3) SQLite 登记巡检
 db_fail=0
 if ! command -v sqlite3 >/dev/null 2>&1; then

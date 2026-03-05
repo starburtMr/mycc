@@ -19,3 +19,8 @@ memory/backup/weekly_latest.db
 # EvoMap local state
 scripts/evomap/config.local.sh
 scripts/evomap/.state/
+
+# Agent-Reach local state
+scripts/integrations/agent_reach/config.local.sh
+scripts/integrations/agent_reach/.state/
+.runtime/

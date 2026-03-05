@@ -107,3 +107,19 @@
 - 规则决策日志：`0-System/policy/decision-log.md`
 - 架构说明：`4-Assets/architecture/evolution-loop-mvp.md`
 
+## Agent-Reach 受限接入
+
+- 适配目录：`scripts/integrations/agent_reach/`
+- 安装：`bash scripts/integrations/agent_reach/install.sh`
+- 诊断：`bash scripts/integrations/agent_reach/diagnose.sh`
+- 更新：`bash scripts/integrations/agent_reach/update.sh`
+- 默认关闭，且强制 `AGENT_REACH_NO_AGENT_CONFIG=1`（禁止改 `.claude/.codex`）
+- 说明文档：`4-Assets/integrations/agent-reach.md`
+
+## 统一联网搜索（EvoMap 优先）
+
+- 入口：`bash scripts/integrations/web_search.sh --query "<问题>" --task tasks/active/<task>.md`
+- 路由：先 EvoMap，命中不足自动回退 Agent-Reach
+- 输出：结构化 JSON（项目上下文或 sessions 目录）
+- 说明文档：`4-Assets/integrations/web-search.md`
+
