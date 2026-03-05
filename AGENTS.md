@@ -50,6 +50,7 @@
 
 - 默认最小加载，只启用当前项目白名单工具。
 - 项目工具白名单见 `2-Projects/<project-name>/context/TOOLING_PROFILE.md`。
+- 执行任务前必须先完成 EvoMap 经验检索，检索失败不得进入执行阶段。
 
 ## EvoMap 只读规则
 
