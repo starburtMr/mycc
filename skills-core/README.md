@@ -18,6 +18,8 @@
 - `scripts/skills/skill-import.sh`：导入脚本（新增或更新注册项）。
 - `scripts/skills/register-skill.sh`：统一注册入口（推荐）。
 - `scripts/skills/resolve-active-skills.sh`：解析默认可路由技能。
+- `scripts/skills/route-skill.sh`：按 query 执行默认路由匹配。
+- `scripts/skills/auto-downgrade.sh`：按治理规则自动降级 skill。
 - `scripts/guardrails/check_skills_consistency.sh`：一致性校验脚本。
 - `scripts/guardrails/check_skill_structure.sh`：目录结构强校验脚本。
 
@@ -40,6 +42,13 @@
    - `bash scripts/guardrails/check_skill_structure.sh`
 7. 执行工作区巡检：
    - `bash scripts/guardrails/check_workspace.sh`
+
+## 路由与降级示例
+
+```bash
+bash scripts/skills/route-skill.sh --platform codex --query "写入 Obsidian 决策笔记"
+bash scripts/skills/auto-downgrade.sh --dry-run
+```
 
 ## 自动导入最小示例
 

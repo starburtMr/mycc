@@ -70,6 +70,7 @@ bash scripts/guardrails/check_workspace.sh
 3. Claude/Codex 路径可以不同，但路由标准一致，优先 `entry_shared`。
 4. 仅 `verified` 且 `default_enabled=true` 的 skill 才允许默认路由。
 5. 默认路由解析入口：`bash scripts/skills/resolve-active-skills.sh <codex|claude>`。
+6. 默认路由执行入口：`bash scripts/skills/route-skill.sh --platform <codex|claude> --query "<意图>"`。
 
 ## 4. 元数据最小标准
 
@@ -100,6 +101,7 @@ bash scripts/guardrails/check_workspace.sh
 1. 月度 KPI：`bash scripts/loop/monthly_kpi.sh`。
 2. 月度 Skill 评审：`bash scripts/skills/monthly_skill_review.sh`。
 3. 低价值/高风险 skill 进入淘汰候选并降级 `default_enabled=false`。
+4. 自动降级执行：`bash scripts/skills/auto-downgrade.sh`。
 
 ## 8. 系统边界
 

@@ -99,6 +99,8 @@
 - 环境变量导入：`bash scripts/skills/skill-import-from-env.sh`
 - 手工导入脚本：`bash scripts/skills/skill-import.sh <manifest.yaml>`
 - 默认路由解析：`bash scripts/skills/resolve-active-skills.sh <codex|claude>`
+- 默认路由执行器：`bash scripts/skills/route-skill.sh --platform <codex|claude> --query "<意图>"`
+- 自动降级：`bash scripts/skills/auto-downgrade.sh --dry-run`
 - 一致性校验：`bash scripts/guardrails/check_skills_consistency.sh`
 - 目录结构强校验：`bash scripts/guardrails/check_skill_structure.sh`
 - 工作区巡检已内置 skills 检查（目录结构违规会阻断）

@@ -191,8 +191,14 @@ fi
 if [[ ! -x "$ROOT_DIR/scripts/skills/resolve-active-skills.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/resolve-active-skills.sh"
 fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/route-skill.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/route-skill.sh"
+fi
 if [[ ! -x "$ROOT_DIR/scripts/skills/monthly_skill_review.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/monthly_skill_review.sh"
+fi
+if [[ ! -x "$ROOT_DIR/scripts/skills/auto-downgrade.sh" ]]; then
+  echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/skills/auto-downgrade.sh"
 fi
 if [[ ! -x "$ROOT_DIR/scripts/guardrails/check_skill_structure.sh" ]]; then
   echo "[告警] 缺少或不可执行: $ROOT_DIR/scripts/guardrails/check_skill_structure.sh"
