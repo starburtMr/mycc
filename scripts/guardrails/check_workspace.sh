@@ -148,6 +148,16 @@ if [[ ! -f "$ROOT_DIR/3-Thinking/reflection/daily-reflection.md" ]]; then
   echo "[告警] 缺少反思模板: $ROOT_DIR/3-Thinking/reflection/daily-reflection.md"
 fi
 
+# 2.6) Skill Router 一致性软检查（仅告警，不阻断）
+if [[ -x "$ROOT_DIR/scripts/guardrails/check_skills_consistency.sh" ]]; then
+  if ! bash "$ROOT_DIR/scripts/guardrails/check_skills_consistency.sh" >/tmp/mycc_skills_check.log 2>&1; then
+    echo "[告警] Skill Router 一致性检查失败"
+    sed -n '1,20p' /tmp/mycc_skills_check.log
+  fi
+else
+  echo "[告警] 缺少 skills 一致性脚本: $ROOT_DIR/scripts/guardrails/check_skills_consistency.sh"
+fi
+
 # 3) SQLite 登记巡检
 db_fail=0
 if ! command -v sqlite3 >/dev/null 2>&1; then

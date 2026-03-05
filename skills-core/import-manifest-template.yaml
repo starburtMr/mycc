@@ -1,0 +1,20 @@
+# 用法：复制为真实 manifest，再传给 skill-import.sh
+skill_id: sample_skill
+display_name: 示例技能
+category: engineering
+source:
+  manager: manual
+  repo: local
+  version: "0.1.0"
+routing:
+  entry_shared: skills-core/sample-skill/SKILL.md
+  entry_codex: .codex/skills/sample-skill/SKILL.md
+  entry_claude: .claude/skills/sample-skill/SKILL.md
+  supports_codex: true
+  supports_claude: true
+quality:
+  owner: cc
+  last_verified_at: "2026-03-05"
+  test_status: unverified
+notes:
+  - 首次导入模板，请修改为真实值。

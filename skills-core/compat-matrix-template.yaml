@@ -1,0 +1,14 @@
+version: 1
+matrix:
+  - skill_id: sample_skill
+    codex:
+      supported: true
+      entry: .codex/skills/sample-skill/SKILL.md
+      min_version: "n/a"
+    claude:
+      supported: true
+      entry: .claude/skills/sample-skill/SKILL.md
+      min_version: "n/a"
+    shared:
+      entry: skills-core/sample-skill/SKILL.md
+      priority: high

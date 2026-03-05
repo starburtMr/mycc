@@ -87,3 +87,12 @@
 - 检索产物：
   - `2-Projects/<project>/context/EVOMAP_EXPERIENCE.md`
   - `2-Projects/<project>/context/EVOMAP_LAST_SEARCH.json`
+
+## Skill Router（跨管理器标准化）
+
+- 注册真源：`skills-core/skill-registry.yaml`
+- 导入脚本：`bash scripts/skills/skill-import.sh <manifest.yaml>`
+- 一致性校验：`bash scripts/guardrails/check_skills_consistency.sh`
+- 工作区巡检已内置 skills 软检查（告警不阻断）
+- 详细说明见：`skills-core/README.md`
+
